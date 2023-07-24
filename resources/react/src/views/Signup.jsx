@@ -2,6 +2,7 @@ import { useState } from "react";
 import Header from "../components/Header";
 import axiosClient from "../axios";
 import { NavLink } from "react-router-dom";
+import { useAuthStateContext } from "../context/AuthContext";
 
 /*
   This example requires some changes to your config:
@@ -18,13 +19,16 @@ import { NavLink } from "react-router-dom";
   ```
 */
 export default function Signup() {
+    const { setCurrentUser, setToken } = useAuthStateContext();
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [passwordConfirmation, setPasswordConfirmation] = useState("");
+    const [error, setError] = useState({ __html: "" });
 
     const onSubmit = (event) => {
         event.preventDefault();
+        setError({ __html: "" });
         alert("submit");
 
         axiosClient
@@ -36,11 +40,21 @@ export default function Signup() {
             })
             .then(({ data }) => {
                 console.log(data);
-                // setCurrentUser(data.user)
+                setToken(data.token);
+                setCurrentUser(data.user);
             })
             .catch((error) => {
                 alert("fail");
-                console.log(error);
+                if (error.response) {
+                    const finalErrors = Object.values(
+                        error.response.data.errors
+                    ).reduce((accum, next) => [...accum, ...next], []);
+                    console.log(finalErrors);
+                    setError({ __html: finalErrors.join("<br>") });
+                }
+                // console.error(error);
+                // console.log("ddd");
+                // console.log(error.__html);
             });
     };
 
@@ -71,6 +85,14 @@ export default function Signup() {
                         </NavLink>
                     </p>
                 </div>
+                {error.__html && (
+                    <div
+                        className="bg-red-500 rounded py-2 px-3 text-white"
+                        dangerouslySetInnerHTML={error}
+                    >
+                        {"dfsf"}
+                    </div>
+                )}
 
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <form

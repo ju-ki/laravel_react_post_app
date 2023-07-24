@@ -3,7 +3,7 @@ import React, { useContext, useState } from "react";
 const AuthStateContext = React.createContext({
     currentUser: null,
     token: null,
-    setUser: () => {},
+    setCurrentUser: () => {},
     setToken: () => {},
 });
 
@@ -20,7 +20,13 @@ export const ContextProvider = ({ children }) => {
         _setToken(token);
     };
 
-    return <AuthStateContext.Provider>{children}</AuthStateContext.Provider>;
+    return (
+        <AuthStateContext.Provider
+            value={(currentUser, setCurrentUser, token, setToken)}
+        >
+            {children}
+        </AuthStateContext.Provider>
+    );
 };
 
 export const useAuthStateContext = () => useContext(AuthStateContext);
