@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Header from "../components/Header";
 import axiosClient from "../axios";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuthStateContext } from "../context/AuthContext";
 
 /*
@@ -19,16 +19,18 @@ import { useAuthStateContext } from "../context/AuthContext";
   ```
 */
 export default function Signup() {
-    const { setCurrentUser, setToken } = useAuthStateContext();
+    const { setCurrentUser, setToken, token, currentUser } =
+        useAuthStateContext();
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [passwordConfirmation, setPasswordConfirmation] = useState("");
-    const [error, setError] = useState({ __html: "" });
+    const [errors, setErrors] = useState([]);
+    const navigate = useNavigate();
 
     const onSubmit = (event) => {
         event.preventDefault();
-        setError({ __html: "" });
+        setErrors([]);
         alert("submit");
 
         axiosClient
@@ -38,23 +40,31 @@ export default function Signup() {
                 password: password,
                 password_confirmation: passwordConfirmation,
             })
-            .then(({ data }) => {
-                console.log(data);
-                setToken(data.token);
-                setCurrentUser(data.user);
-            })
-            .catch((error) => {
-                alert("fail");
-                if (error.response) {
+            .then((responses) => {
+                console.log(responses);
+                if (responses.response) {
                     const finalErrors = Object.values(
-                        error.response.data.errors
+                        responses.response.data.errors
                     ).reduce((accum, next) => [...accum, ...next], []);
-                    console.log(finalErrors);
-                    setError({ __html: finalErrors.join("<br>") });
+                    setErrors(finalErrors);
+                } else {
+                    setToken(responses.data.token);
+                    setCurrentUser(responses.data.user);
+                    navigate("/");
                 }
+            })
+            .catch((err) => {
+                console.log("エラー");
+                console.log(err);
                 // console.error(error);
-                // console.log("ddd");
-                // console.log(error.__html);
+                // if (error.response) {
+                //     console.log(error.response.data.errors);
+                //     const finalErrors = Object.values(
+                //         error.response.data.errors
+                //     ).reduce((accum, next) => [...accum, ...next], []);
+                //     console.log(finalErrors);
+                //     setError({ __html: finalErrors.join("<br>") });
+                // }
             });
     };
 
@@ -84,15 +94,24 @@ export default function Signup() {
                             ログイン
                         </NavLink>
                     </p>
+                    {errors.length ? (
+                        <div className="bg-red-500 rounded py-2 px-3 text-white">
+                            {errors.map((_error) => (
+                                <li className="list-none">{_error}</li>
+                            ))}
+                        </div>
+                    ) : (
+                        ""
+                    )}
+                    {/* {errors.length && (
+                        <div
+                            className="bg-red-500 rounded py-2 px-3 text-white"
+                            // dangerouslySetInnerHTML={{ __html: errors }}
+                        >
+                            {errors.map((_error) => _error)}
+                        </div>
+                    )} */}
                 </div>
-                {error.__html && (
-                    <div
-                        className="bg-red-500 rounded py-2 px-3 text-white"
-                        dangerouslySetInnerHTML={error}
-                    >
-                        {"dfsf"}
-                    </div>
-                )}
 
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <form
@@ -101,6 +120,11 @@ export default function Signup() {
                         method="POST"
                         onSubmit={onSubmit}
                     >
+                        <input
+                            type="hidden"
+                            name="remember"
+                            defaultValue="true"
+                        />
                         <div>
                             <label
                                 htmlFor="userName"
@@ -113,7 +137,6 @@ export default function Signup() {
                                     id="user-name"
                                     name="user_name"
                                     type="text"
-                                    required
                                     value={userName}
                                     onChange={(event) =>
                                         setUserName(event.target.value)
@@ -135,7 +158,6 @@ export default function Signup() {
                                     name="email"
                                     type="email"
                                     autoComplete="email"
-                                    required
                                     value={email}
                                     onChange={(event) =>
                                         setEmail(event.target.value)
