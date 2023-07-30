@@ -55,9 +55,14 @@ export default function Header() {
                             className="mx-4 text-sm font-semibold leading-6 text-gray-900"
                         >
                             {token ? (
-                                <NavLink onClick={(event) => logout(event)}>
-                                    Logout
-                                </NavLink>
+                                <>
+                                    <NavLink to={"/create"} className="mx-3">
+                                        投稿する
+                                    </NavLink>
+                                    <NavLink onClick={(event) => logout(event)}>
+                                        Logout
+                                    </NavLink>
+                                </>
                             ) : (
                                 <>
                                     <NavLink to={"/signup"}>

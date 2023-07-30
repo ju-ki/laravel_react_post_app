@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import axiosClient from "../axios";
 import { useState } from "react";
 import Header from "../components/Header";
+import TabContent from "../components/TabContent";
 
 export default function Profile() {
     const [user, setUser] = useState({});
@@ -22,9 +23,9 @@ export default function Profile() {
             });
     }, []);
 
-    const handleTab = (event, newValue) => {
-        setCurrentTab(newValue);
-    };
+    // const handleTab = (event, newValue) => {
+    //     setCurrentTab(newValue);
+    // };
 
     return (
         <>
@@ -49,12 +50,13 @@ export default function Profile() {
             </div>
 
             <nav className="my-20 flex justify-center">
-                <button className="text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none text-blue-500 border-b-2 font-medium border-blue-500">
+                <TabContent />
+                {/* <button className="text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none text-blue-500 border-b-2 font-medium border-blue-500">
                     過去に投稿したスレッド
                 </button>
                 <button className="text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none">
                     upvoteしたスレッド
-                </button>
+                </button> */}
             </nav>
         </>
     );
