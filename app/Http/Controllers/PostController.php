@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostRequest;
+use App\Models\Category;
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -25,9 +28,15 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
         //
+        $data = $request->validated();
+        $user = request()->user();
+
+        Post::create($data);
+        return "success";
+        // return response(compact('data'));
     }
 
     /**
@@ -60,5 +69,14 @@ class PostController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function createCategory($data)
+    {
+        foreach ($data["categories"] as $category) {
+            Category::firstOrCreate([
+                "name" => $category
+            ]);
+        }
     }
 }

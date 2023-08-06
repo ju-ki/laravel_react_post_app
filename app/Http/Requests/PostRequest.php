@@ -23,6 +23,10 @@ class PostRequest extends FormRequest
     {
         return [
             //
+            "title" => "string|required",
+            "body" => "string|required",
+            "image" => "string|nullable",
+            "categories" => "array|nullable"
         ];
     }
 }

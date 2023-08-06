@@ -20,8 +20,6 @@ export const ContextProvider = ({ children }) => {
         _setToken(token);
     };
 
-    
-
     return (
         <AuthStateContext.Provider
             value={{ currentUser, setCurrentUser, token, setToken }}
