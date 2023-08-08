@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PostRequest;
 use App\Models\Category;
 use App\Models\Post;
+use Exception;
 use Illuminate\Http\Request;
+use Throwable;
 
 class PostController extends Controller
 {
@@ -31,12 +33,39 @@ class PostController extends Controller
     public function store(PostRequest $request)
     {
         //
-        $data = $request->validated();
-        $user = request()->user();
+        try {
+            $data = $request->validated();
+            // $post = Post::create([
+            //     "title" => $data["title"],
+            //     "body" => $data["body"],
+            //     "image" => $data["image"],
+            //     "user_id" => $request->user()->id
+            // ]);
+            $user = $request->user()->id;
+            $post = new Post;
+            $post->title = $request['title'];
+            $post->body = $request['body'];
+            // $post->image = $request['image'];
+            $post->user_id = $user;
+            // $post->image = $data->input("image"); // 画像の保存には追加の処理が必要かもしれません
+            $post->save();
 
-        Post::create($data);
-        return "success";
-        // return response(compact('data'));
+            // 各カテゴリを保存し、postとリンクします
+            $category_ids = [];
+            foreach ($request->categories as $categoryData) {
+                // Categoryモデルにデータを保存
+                $category = Category::firstOrCreate(['name' => $categoryData['value']]);
+                $category_ids[] = $category->id;
+            }
+
+            // PostとCategoryの間のリレーションシップを保存
+            $post->categories()->sync($category_ids);
+
+            return "success";
+        } catch (Throwable $e) {
+            // return $data;
+            return $e->getMessage();
+        }
     }
 
     /**
@@ -73,10 +102,13 @@ class PostController extends Controller
 
     public function createCategory($data)
     {
-        foreach ($data["categories"] as $category) {
-            Category::firstOrCreate([
-                "name" => $category
-            ]);
+        if (isset($data["categories"]) && count($data["categories"]) > 0) {
+            foreach ($data as $d) {
+                $category = Category::firstOrCreate([
+                    "name" => $d["categories"]["value"]
+                ]);
+                $data->categories()->attach($category->id);
+            }
         }
     }
 }

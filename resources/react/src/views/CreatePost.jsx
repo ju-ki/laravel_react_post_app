@@ -21,7 +21,6 @@ export default function CreatePost() {
             image: image,
             categories: selectedCategories,
         };
-        console.log(payload);
 
         axiosClient
             .post("/create", payload)
