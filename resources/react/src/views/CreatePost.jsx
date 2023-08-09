@@ -3,6 +3,7 @@ import { useState } from "react";
 import PreviewImageComponent from "../components/PreviewImageComponent";
 import CategorySelector from "../components/CategorySelector";
 import axiosClient from "../axios";
+import { useNavigate } from "react-router-dom";
 
 export default function CreatePost() {
     const [title, setTitle] = useState("");
@@ -10,6 +11,7 @@ export default function CreatePost() {
     const [image, setImage] = useState("");
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [errors, setErrors] = useState([]);
+    const navigate = useNavigate();
 
     const onSubmit = (e) => {
         e.preventDefault();
@@ -32,6 +34,8 @@ export default function CreatePost() {
                     ).reduce((accum, next) => [...accum, ...next], []);
                     setErrors(finalErrors);
                     console.log(errors);
+                } else {
+                    navigate("/");
                 }
                 // console.log(responses);
             })

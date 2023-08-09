@@ -35,28 +35,16 @@ class PostController extends Controller
         //
         try {
             $data = $request->validated();
-            // $post = Post::create([
-            //     "title" => $data["title"],
-            //     "body" => $data["body"],
-            //     "image" => $data["image"],
-            //     "user_id" => $request->user()->id
-            // ]);
             $user = $request->user()->id;
             $post = new Post;
             $post->title = $request['title'];
             $post->body = $request['body'];
             // $post->image = $request['image'];
             $post->user_id = $user;
-            // $post->image = $data->input("image"); // 画像の保存には追加の処理が必要かもしれません
             $post->save();
 
             // 各カテゴリを保存し、postとリンクします
-            $category_ids = [];
-            foreach ($request->categories as $categoryData) {
-                // Categoryモデルにデータを保存
-                $category = Category::firstOrCreate(['name' => $categoryData['value']]);
-                $category_ids[] = $category->id;
-            }
+            $category_ids = $this->createCategory($data);
 
             // PostとCategoryの間のリレーションシップを保存
             $post->categories()->sync($category_ids);
@@ -71,9 +59,10 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show()
     {
-        //
+        $allPosts = Post::get();
+        return $allPosts;
     }
 
     /**
@@ -102,13 +91,12 @@ class PostController extends Controller
 
     public function createCategory($data)
     {
-        if (isset($data["categories"]) && count($data["categories"]) > 0) {
-            foreach ($data as $d) {
-                $category = Category::firstOrCreate([
-                    "name" => $d["categories"]["value"]
-                ]);
-                $data->categories()->attach($category->id);
-            }
+        $category_ids = [];
+        foreach ($data["categories"] as $categoryData) {
+            // Categoryモデルにデータを保存
+            $category = Category::firstOrCreate(['name' => $categoryData['value']]);
+            $category_ids[] = $category->id;
         }
+        return $category_ids;
     }
 }
