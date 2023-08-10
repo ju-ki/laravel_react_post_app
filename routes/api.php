@@ -27,7 +27,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/create', [PostController::class, 'store']);
 });
 
-Route::get("/posts", [PostController::class, "show"]);
+Route::get("/home", [PostController::class, "home"]);
+Route::get("/post/{id}", [PostController::class, "show"]);
 Route::get("/category", [CategoryController::class, "fetchCategory"]);
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);

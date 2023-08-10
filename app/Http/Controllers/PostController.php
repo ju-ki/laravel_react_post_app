@@ -19,6 +19,12 @@ class PostController extends Controller
         //
     }
 
+    public function home()
+    {
+        $allPosts = Post::get();
+        return $allPosts;
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -59,10 +65,10 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show(string $id)
     {
-        $allPosts = Post::get();
-        return $allPosts;
+        $post = Post::with("categories")->where("id", $id)->first();
+        return $post;
     }
 
     /**
