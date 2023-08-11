@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PostRequest;
 use App\Models\Category;
 use App\Models\Post;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Throwable;
@@ -21,7 +22,12 @@ class PostController extends Controller
 
     public function home()
     {
-        $allPosts = Post::get();
+        $allPosts = Post::orderBy("created_at", "desc")->limit(10)->get();
+        // $allPosts->transform(function ($post) {
+        //     $post->relative_created_at = Carbon::parse($post->created_at)->diffForHumans();
+        //     return $post;
+        // });
+        // $allPosts->attributes["created_at"] = Carbon::parse($allPosts->create_at)->diffForHumans();
         return $allPosts;
     }
 

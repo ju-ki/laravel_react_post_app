@@ -6,7 +6,7 @@ import axios from "axios";
 export default function CategorySelector(props) {
     const defaultOptions = [];
     axiosClient
-        .get("/category")
+       .get("/category")
         .then((response) => {
             console.log(response);
             response.data.forEach((element) => {

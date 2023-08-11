@@ -11,6 +11,7 @@ export default function TopView() {
         axiosClient
             .get("/home")
             .then((response) => {
+                console.log(response);
                 setLatestPosts(response.data);
             })
             .catch((err) => console.log(err));
@@ -18,25 +19,26 @@ export default function TopView() {
     return (
         <>
             <Header />
-            <h1>TopView</h1>
-            {token ? "ログインされています" : "ログインされていません"}
-            <ul>
+            <div className="container mx-auto">
+                <h1>TopView</h1>
+                {token ? "ログインされています" : "ログインされていません"}
                 <h1 className="text-3xl">最新の投稿</h1>
-                {/* {latestPosts} */}
-                {latestPosts.map((post) => (
-                    <>
-                        <a href={`post/
-                        ${post.id}`}>
-                            <li
-                                key={post.id}
-                                className="border-r border-l border-b border-t px-12 py-6 my-4 cursor-pointer"
-                            >
-                                Title: {post.title}, Body: {post.body}
-                            </li>
-                        </a>
-                    </>
-                ))}
-            </ul>
+                <ul>
+                    {latestPosts.map((post) => (
+                        <>
+                            <a href={`post/${post.id}`}>
+                                <li
+                                    key={post.id}
+                                    className="border px-12 py-6 my-4 cursor-pointer"
+                                >
+                                    Title: {post.title}, Body: {post.body}
+                                    Date: {post.created_at}
+                                </li>
+                            </a>
+                        </>
+                    ))}
+                </ul>
+            </div>
         </>
     );
 }
