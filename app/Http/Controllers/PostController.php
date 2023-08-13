@@ -23,11 +23,10 @@ class PostController extends Controller
     public function home()
     {
         $allPosts = Post::orderBy("created_at", "desc")->limit(10)->get();
-        // $allPosts->transform(function ($post) {
-        //     $post->relative_created_at = Carbon::parse($post->created_at)->diffForHumans();
-        //     return $post;
-        // });
-        // $allPosts->attributes["created_at"] = Carbon::parse($allPosts->create_at)->diffForHumans();
+        $allPosts->transform(function ($post) {
+            $post->days_ago = Carbon::parse($post->created_at)->diffForHumans();
+            return $post;
+        });
         return $allPosts;
     }
 
@@ -74,6 +73,7 @@ class PostController extends Controller
     public function show(string $id)
     {
         $post = Post::with("categories")->where("id", $id)->first();
+        $post->day_ago = Carbon::parse($post->created_at)->diffForHumans();
         return $post;
     }
 

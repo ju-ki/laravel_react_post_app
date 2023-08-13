@@ -3,6 +3,7 @@ import { useAuthStateContext } from "../context/AuthContext";
 import axiosClient from "../axios";
 import { useState } from "react";
 import { useEffect } from "react";
+import moment from "moment";
 
 export default function TopView() {
     const { token, currentUser } = useAuthStateContext();
@@ -32,7 +33,11 @@ export default function TopView() {
                                     className="border px-12 py-6 my-4 cursor-pointer"
                                 >
                                     Title: {post.title}, Body: {post.body}
-                                    Date: {post.created_at}
+                                    Days Ago:{post.days_ago}
+                                    Date:{" "}
+                                    {moment(post.created_at).format(
+                                        "YYYY-MM-DD"
+                                    )}
                                 </li>
                             </a>
                         </>

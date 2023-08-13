@@ -13,6 +13,5 @@ class CategoryController extends Controller
         $categories = Category::select("name")->get();
 
         return $categories;
-        // return "success";
     }
 }

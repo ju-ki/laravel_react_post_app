@@ -9,6 +9,7 @@ export default function PostView() {
     const [title, setTitle] = useState("");
     const [body, setBody] = useState("");
     const [categories, setCategories] = useState([]);
+    const [dayAgo, setDayAgo] = useState("");
     useEffect(() => {
         axiosClient
             .get(`/post/${id}`)
@@ -17,6 +18,7 @@ export default function PostView() {
                 setTitle(response.data.title);
                 setBody(response.data.body);
                 setCategories(response.data.categories);
+                setDayAgo(response.data.day_ago);
             })
             .catch((err) => {
                 console.log(err);
@@ -28,6 +30,7 @@ export default function PostView() {
             <Header />
             <div className="container mx-auto px-12 mt-10">
                 <p className="text-6xl">{title}</p>
+                <p className="mt-5">{dayAgo}</p>
                 <ul className="flex mt-5">
                     {categories.map((category) => (
                         <>
