@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/create', [PostController::class, 'store']);
+    Route::post('/post/edit/{id}', [PostController::class, 'update']);
 });
 
 Route::get("/home", [PostController::class, "home"]);

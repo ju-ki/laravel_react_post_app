@@ -5,6 +5,7 @@ import Signup from "./views/Signup";
 import Profile from "./views/Profile";
 import CreatePost from "./views/CreatePost";
 import PostView from "./views/PostView";
+import EditPost from "./views/EditPost";
 
 const router = createBrowserRouter([
     {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
     {
         path: "post/:id",
         element: <PostView />,
+    },
+    {
+        path: "post/edit/:id",
+        element: <EditPost />,
     },
 ]);
 

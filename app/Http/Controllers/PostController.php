@@ -62,7 +62,6 @@ class PostController extends Controller
 
             return "success";
         } catch (Throwable $e) {
-            // return $data;
             return $e->getMessage();
         }
     }
@@ -90,7 +89,8 @@ class PostController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        //TODO:update
+        return $request;
     }
 
     /**

@@ -1,11 +1,12 @@
 import React from "react";
 import Header from "../components/Header";
 import axiosClient from "../axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
 export default function PostView() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [title, setTitle] = useState("");
     const [body, setBody] = useState("");
     const [categories, setCategories] = useState([]);
@@ -25,11 +26,23 @@ export default function PostView() {
             });
     }, []);
 
+    const onClickEditButton = () => {
+        navigate(`/post/edit/${id}`);
+    };
+
     return (
         <>
             <Header />
             <div className="container mx-auto px-12 mt-10">
-                <p className="text-6xl">{title}</p>
+                <div className="flex justify-between items-center">
+                    <p className="text-6xl">{title}</p>
+                    <button
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded"
+                        onClick={onClickEditButton}
+                    >
+                        Edit
+                    </button>
+                </div>
                 <p className="mt-5">{dayAgo}</p>
                 <ul className="flex mt-5">
                     {categories.map((category) => (
