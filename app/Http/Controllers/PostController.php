@@ -87,10 +87,22 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(PostRequest $request, string $id)
     {
         //TODO:update
-        return $request;
+        $data = $request->validated();
+        $post = Post::find($id);
+        $post->update([
+            "title" => $data["title"],
+            "body" => $data["body"],
+            // "image" => $data["image"]
+        ]);
+        // 各カテゴリを保存し、postとリンクします
+        $category_ids = $this->createCategory($data);
+
+        // PostとCategoryの間のリレーションシップを保存
+        $post->categories()->sync($category_ids);
+        return "success";
     }
 
     /**

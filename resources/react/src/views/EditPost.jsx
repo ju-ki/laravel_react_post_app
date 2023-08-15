@@ -13,6 +13,7 @@ export default function EditPost() {
     const [title, setTitle] = useState("");
     const [image, setImage] = useState("");
     const [body, setBody] = useState("");
+    const [loading, setLoading] = useState(true);
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
@@ -22,10 +23,20 @@ export default function EditPost() {
                 console.log(response);
                 setTitle(response.data.title);
                 setBody(response.data.body);
-                setCategories(response.data.categories);
+                const categories = response.data["categories"].map(
+                    (element) => ({
+                        value: element["name"],
+                        label: element["name"],
+                    })
+                );
+                setCategories(categories);
+                console.log(response.data.categories);
             })
             .catch((err) => {
                 console.log(err);
+            })
+            .finally(() => {
+                setLoading(false); // データの取得が完了したらloadingをfalseに設定
             });
     }, []);
 
@@ -40,10 +51,12 @@ export default function EditPost() {
             image: image,
             categories: categories,
         };
+        console.log(payload);
         axiosClient
             .post(`/post/edit/${id}`, payload)
             .then((response) => {
                 console.log(response);
+                navigate(`/post/${id}`);
             })
             .catch((err) => {
                 console.log(err);
@@ -53,6 +66,7 @@ export default function EditPost() {
     const onClickReturnButton = () => {
         navigate(`/post/${id}`);
     };
+    if (loading) return null;
     return (
         <>
             <Header />
@@ -106,7 +120,10 @@ export default function EditPost() {
                         />
                     </div>
                     <div>
-                        <CategorySelector setSelectedCategories={categories} />
+                        <CategorySelector
+                            setSelectedCategories={setCategories}
+                            defaultValue={categories}
+                        />
                     </div>
 
                     <div className="py-12">
