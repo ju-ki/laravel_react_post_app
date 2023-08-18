@@ -50,7 +50,7 @@ class PostController extends Controller
             $post = new Post;
             $post->title = $request['title'];
             $post->body = $request['body'];
-            // $post->image = $request['image'];
+            $post->image = $this->storeImage($request);
             $post->user_id = $user;
             $post->save();
 
@@ -95,7 +95,7 @@ class PostController extends Controller
         $post->update([
             "title" => $data["title"],
             "body" => $data["body"],
-            // "image" => $data["image"]
+            "image" => $this->storeImage($request)
         ]);
         // 各カテゴリを保存し、postとリンクします
         $category_ids = $this->createCategory($data);
@@ -122,5 +122,14 @@ class PostController extends Controller
             $category_ids[] = $category->id;
         }
         return $category_ids;
+    }
+
+
+    public function storeImage($data)
+    {
+        $original = $data->file("image")->getClientOriginalName();
+        $name = date("Ymd_His") . '_' . $original;
+        $data->file("image")->move("storage/images", $name);
+        return $name;
     }
 }

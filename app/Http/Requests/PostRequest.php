@@ -25,7 +25,7 @@ class PostRequest extends FormRequest
             //
             "title" => "string|required",
             "body" => "string|required",
-            "image" => "string|nullable",
+            "image" => "image|mimes:jpeg,png,jpg,gif|max:2048|nullable",
             "categories" => "array|nullable"
         ];
     }

@@ -14,7 +14,9 @@ export default function PreviewImageComponent(props) {
         const files = e.target.files;
         if (files.length > 0) {
             const file = files[0];
+            console.log(file);
             const render = new FileReader();
+            // setImageData(file["name"]);
             render.onload = (e) => {
                 const imageData = e.target.result;
                 setImageData(imageData);
@@ -42,6 +44,12 @@ export default function PreviewImageComponent(props) {
     const handleImageChange = (e) => {
         if (typeof props.onImageChange === "function") {
             props.onImageChange(e);
+        }
+
+        if (e.status === "add") {
+            console.log("追加されました");
+            console.log(e.file);
+            // setImageData(e.file);
         }
     };
     return (

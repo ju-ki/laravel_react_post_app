@@ -11,6 +11,7 @@ export default function EditPost() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [title, setTitle] = useState("");
+    const [preview, setPreview] = useState(null);
     const [image, setImage] = useState("");
     const [body, setBody] = useState("");
     const [loading, setLoading] = useState(true);
@@ -41,7 +42,9 @@ export default function EditPost() {
     }, []);
 
     const handleImageChange = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
+        console.log(e.file);
+        setImage(e.file);
     };
     const onSubmit = (event) => {
         event.preventDefault();
@@ -53,10 +56,14 @@ export default function EditPost() {
         };
         console.log(payload);
         axiosClient
-            .post(`/post/edit/${id}`, payload)
+            .post(`/post/edit/${id}`, payload, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            })
             .then((response) => {
                 console.log(response);
-                navigate(`/post/${id}`);
+                // navigate(`/post/${id}`);
             })
             .catch((err) => {
                 console.log(err);
@@ -66,7 +73,19 @@ export default function EditPost() {
     const onClickReturnButton = () => {
         navigate(`/post/${id}`);
     };
-    if (loading) return null;
+
+    const onFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+            setImage(file);
+        }
+    };
+
     return (
         <>
             <Header />
@@ -118,6 +137,13 @@ export default function EditPost() {
                         <PreviewImageComponent
                             onImageChange={(e) => handleImageChange(e)}
                         />
+                    </div>
+
+                    <div>
+                        {preview && (
+                            <img src={preview} alt="Preview" width="200" />
+                        )}
+                        <input type="file" onChange={onFileChange} />
                     </div>
                     <div>
                         <CategorySelector

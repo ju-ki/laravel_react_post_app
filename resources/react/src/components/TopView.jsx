@@ -32,6 +32,7 @@ export default function TopView() {
                                     key={post.id}
                                     className="border px-12 py-6 my-4 cursor-pointer"
                                 >
+                                    <img src="${}" />
                                     Title: {post.title}, Body: {post.body}
                                     Days Ago:{post.days_ago}
                                     Date:{" "}

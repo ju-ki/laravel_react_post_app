@@ -13,7 +13,7 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["title", "body", "user_id"];
+    protected $fillable = ["title", "body", "user_id", "image"];
 
     protected function getCreatedAt()
     {
