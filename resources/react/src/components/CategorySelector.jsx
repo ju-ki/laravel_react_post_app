@@ -32,13 +32,10 @@ export default function CategorySelector(props) {
             })
             .finally(() => {
                 setLoading(false); // データの取得が完了したらloadingをfalseに設定
-                console.log(props.defaultValue);
             });
     }, []);
 
     const handleSelectorChange = (selected) => {
-        console.log("changed");
-        console.log(selected);
         props.setSelectedCategories(selected || []);
     };
 
@@ -52,48 +49,3 @@ export default function CategorySelector(props) {
         />
     );
 }
-
-// import { useState, useEffect } from "react";
-// import CreatableSelect from "react-select/creatable";
-// import axiosClient from "../axios";
-
-// export default function CategorySelector(props) {
-//     const defaultOptions = [{ value: "aaa", label: "aaa" }];
-//     useEffect(() => {
-//         axiosClient
-//             .get("/category")
-//             .then((response) => {
-//                 console.log(response);
-//                 response.data.forEach((element) => {
-//                     console.log(element);
-//                     if (
-//                         !defaultOptions.includes({
-//                             value: element["name"],
-//                             label: element["name"],
-//                         })
-//                     ) {
-//                         defaultOptions.push({
-//                             value: element["name"],
-//                             label: element["name"],
-//                         });
-//                     }
-//                 });
-//                 console.log(defaultOptions);
-//             })
-//             .catch((err) => {
-//                 console.log(err);
-//             });
-//     }, []);
-//     const handleSelectorChange = (selected) => {
-//         props.setSelectedCategories(selected || []);
-//     };
-
-//     return (
-//         <CreatableSelect
-//             defaultValue={defaultOptions[0]}
-//             isMulti
-//             options={defaultOptions}
-//             onChange={handleSelectorChange}
-//         />
-//     );
-// }

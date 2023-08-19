@@ -1,4 +1,5 @@
-import React from "react";
+import { useEffect } from "react";
+import { useRef } from "react";
 import { useState } from "react";
 
 export default function PreviewImageComponent(props) {
@@ -6,50 +7,35 @@ export default function PreviewImageComponent(props) {
     const labelClassName =
         props.labelClassName ||
         "bg-gray-200 text-gray-700 text-sm font-bold py-2 px-4 rounded";
-    const imageClassName = props.imageClassName || "w-48";
+    const imageInputRef = useRef(null);
     const accept = props.accept || "image/jpeg,image/png";
-    const [imageData, setImageData] = useState(null);
+    const [preview, setPreview] = useState(props.initialPreviewUrl);
+    const [image, setImage] = useState("");
 
-    const handleFileChange = (e) => {
-        const files = e.target.files;
-        if (files.length > 0) {
-            const file = files[0];
-            console.log(file);
-            const render = new FileReader();
-            // setImageData(file["name"]);
-            render.onload = (e) => {
-                const imageData = e.target.result;
-                setImageData(imageData);
-                handleImageChange({
-                    status: "add",
-                    file: file,
-                    imageData: imageData,
-                });
+    useEffect(() => {
+        setPreview(props.initialPreviewUrl);
+    }, [props.initialPreviewUrl]);
+
+    const onFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreview(reader.result);
             };
-            render.readAsDataURL(file);
+            reader.readAsDataURL(file);
+            setImage(file);
+        }
+        if (typeof props.onImageChange === "function") {
+            props.onImageChange(e);
         }
     };
 
     const handleImageDelete = () => {
         if (confirm("画像を削除しますか?")) {
-            setImageData(null);
-            handleImageChange({
-                status: "removed",
-                file: null,
-                imageData: null,
-            });
-        }
-    };
-
-    const handleImageChange = (e) => {
-        if (typeof props.onImageChange === "function") {
-            props.onImageChange(e);
-        }
-
-        if (e.status === "add") {
-            console.log("追加されました");
-            console.log(e.file);
-            // setImageData(e.file);
+            setImage("");
+            setPreview(null);
+            imageInputRef.current.value = null;
         }
     };
     return (
@@ -60,20 +46,21 @@ export default function PreviewImageComponent(props) {
                     type="file"
                     accept={accept}
                     style={{ display: "none" }}
-                    onChange={(e) => handleFileChange(e)}
+                    onChange={(e) => onFileChange(e)}
+                    ref={imageInputRef}
                 />
             </label>
-            {imageData && (
-                <div className="mt-5">
-                    <img src={imageData} className={imageClassName} />
-                    <button
-                        type="button"
-                        className="bg-red-500 text-gray-100 text-sm font-bold py-1 px-3 rounded mt-3"
-                        onClick={(e) => handleImageDelete(e)}
-                    >
-                        削除
-                    </button>
-                </div>
+            {preview && (
+                <img className="my-6" src={preview} alt="Preview" width="200" />
+            )}
+            {image && (
+                <button
+                    type="button"
+                    className="bg-red-500 text-gray-100 text-sm font-bold py-1 px-3 rounded mt-3"
+                    onClick={(e) => handleImageDelete(e)}
+                >
+                    削除
+                </button>
             )}
         </>
     );

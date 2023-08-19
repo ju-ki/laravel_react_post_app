@@ -25,6 +25,7 @@ class PostController extends Controller
         $allPosts = Post::orderBy("created_at", "desc")->limit(10)->get();
         $allPosts->transform(function ($post) {
             $post->days_ago = Carbon::parse($post->created_at)->diffForHumans();
+            $post->image_path = asset("storage/images/" . $post->image);
             return $post;
         });
         return $allPosts;
@@ -73,6 +74,7 @@ class PostController extends Controller
     {
         $post = Post::with("categories")->where("id", $id)->first();
         $post->day_ago = Carbon::parse($post->created_at)->diffForHumans();
+        $post->image_path = asset("storage/images/" . $post->image);
         return $post;
     }
 

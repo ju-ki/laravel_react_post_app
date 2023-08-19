@@ -1,4 +1,3 @@
-import React from "react";
 import Header from "../components/Header";
 import CategorySelector from "../components/CategorySelector";
 import PreviewImageComponent from "../components/PreviewImageComponent";
@@ -11,8 +10,8 @@ export default function EditPost() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [title, setTitle] = useState("");
-    const [preview, setPreview] = useState(null);
     const [image, setImage] = useState("");
+    const [imageUrl, setImageUrl] = useState("");
     const [body, setBody] = useState("");
     const [loading, setLoading] = useState(true);
     const [categories, setCategories] = useState([]);
@@ -21,9 +20,10 @@ export default function EditPost() {
         axiosClient
             .get(`/post/${id}`)
             .then((response) => {
-                console.log(response);
                 setTitle(response.data.title);
                 setBody(response.data.body);
+                setImage(response.data.image);
+                setImageUrl(response.data.image_path);
                 const categories = response.data["categories"].map(
                     (element) => ({
                         value: element["name"],
@@ -31,7 +31,6 @@ export default function EditPost() {
                     })
                 );
                 setCategories(categories);
-                console.log(response.data.categories);
             })
             .catch((err) => {
                 console.log(err);
@@ -42,9 +41,9 @@ export default function EditPost() {
     }, []);
 
     const handleImageChange = (e) => {
-        // e.preventDefault();
-        console.log(e.file);
-        setImage(e.file);
+        e.preventDefault();
+        console.log(e.target.files[0]);
+        setImage(e.target.files[0]);
     };
     const onSubmit = (event) => {
         event.preventDefault();
@@ -63,7 +62,7 @@ export default function EditPost() {
             })
             .then((response) => {
                 console.log(response);
-                // navigate(`/post/${id}`);
+                navigate(`/post/${id}`);
             })
             .catch((err) => {
                 console.log(err);
@@ -72,18 +71,6 @@ export default function EditPost() {
 
     const onClickReturnButton = () => {
         navigate(`/post/${id}`);
-    };
-
-    const onFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreview(reader.result);
-            };
-            reader.readAsDataURL(file);
-            setImage(file);
-        }
     };
 
     return (
@@ -136,14 +123,9 @@ export default function EditPost() {
                     <div>
                         <PreviewImageComponent
                             onImageChange={(e) => handleImageChange(e)}
+                            setImage={image}
+                            initialPreviewUrl={imageUrl}
                         />
-                    </div>
-
-                    <div>
-                        {preview && (
-                            <img src={preview} alt="Preview" width="200" />
-                        )}
-                        <input type="file" onChange={onFileChange} />
                     </div>
                     <div>
                         <CategorySelector

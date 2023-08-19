@@ -30,15 +30,23 @@ export default function TopView() {
                             <a href={`post/${post.id}`}>
                                 <li
                                     key={post.id}
-                                    className="border px-12 py-6 my-4 cursor-pointer"
+                                    className="border px-12 py-6 my-4 cursor-pointer flex items-center justify-between"
                                 >
-                                    <img src="${}" />
-                                    Title: {post.title}, Body: {post.body}
-                                    Days Ago:{post.days_ago}
-                                    Date:{" "}
-                                    {moment(post.created_at).format(
-                                        "YYYY-MM-DD"
-                                    )}
+                                    <div className="flex items-center">
+                                        <img
+                                            className="w-12 h-12 mr-6"
+                                            src={post.image_path}
+                                        />
+                                        <div>
+                                            <p className="text-xl font-bold">
+                                                {post.title}
+                                            </p>
+                                            <p>{post.body}</p>
+                                        </div>
+                                    </div>
+                                    <div className="float-right">
+                                        {post.days_ago}
+                                    </div>
                                 </li>
                             </a>
                         </>
