@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,10 +27,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/create', [PostController::class, 'store']);
     Route::post('/post/edit/{id}', [PostController::class, 'update']);
+    Route::post('/comment/{id}', [CommentController::class, 'store']);
 });
 
 Route::get("/home", [PostController::class, "home"]);
 Route::get("/post/{id}", [PostController::class, "show"]);
+Route::get("/comment/{id}", [CommentController::class, "show"]);
 Route::get("/category", [CategoryController::class, "fetchCategory"]);
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);

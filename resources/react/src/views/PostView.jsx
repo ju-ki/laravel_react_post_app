@@ -1,9 +1,10 @@
-import React from "react";
 import Header from "../components/Header";
 import axiosClient from "../axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
+import CommentForm from "../components/CommentForm";
+import CommentComponent from "../components/CommentComponent";
 export default function PostView() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -15,7 +16,6 @@ export default function PostView() {
         axiosClient
             .get(`/post/${id}`)
             .then((response) => {
-                console.log(response);
                 setTitle(response.data.title);
                 setBody(response.data.body);
                 setCategories(response.data.categories);
@@ -56,9 +56,34 @@ export default function PostView() {
                         </>
                     ))}
                 </ul>
+
                 <div className="mt-5 p-5 border">
                     <p>{body}</p>
                 </div>
+
+                <div className="mt-5 p-5 border">
+                    <p>{body}</p>
+                </div>
+                <div className="mt-5 p-5 border">
+                    <p>{body}</p>
+                </div>
+                <div className="mt-5 p-5 border">
+                    <p>{body}</p>
+                </div>
+                <div className="mt-5 p-5 border">
+                    <p>{body}</p>
+                </div>
+                <div className="mt-5 p-5 border">
+                    <p>{body}</p>
+                </div>
+                <div className="mt-5 p-5 border">
+                    <p>{body}</p>
+                </div>
+                <CommentComponent />
+                <div className="mt-5 p-5 border mb-40">
+                    <p>{body}</p>
+                </div>
+                <CommentForm></CommentForm>
             </div>
         </>
     );
