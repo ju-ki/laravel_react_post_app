@@ -1,7 +1,7 @@
-import React from "react";
 import { useState } from "react";
 import axiosClient from "../axios";
 import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function CommentForm() {
     const id = useParams();

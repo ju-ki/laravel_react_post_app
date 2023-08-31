@@ -57,32 +57,7 @@ export default function PostView() {
                     ))}
                 </ul>
 
-                <div className="mt-5 p-5 border">
-                    <p>{body}</p>
-                </div>
-
-                <div className="mt-5 p-5 border">
-                    <p>{body}</p>
-                </div>
-                <div className="mt-5 p-5 border">
-                    <p>{body}</p>
-                </div>
-                <div className="mt-5 p-5 border">
-                    <p>{body}</p>
-                </div>
-                <div className="mt-5 p-5 border">
-                    <p>{body}</p>
-                </div>
-                <div className="mt-5 p-5 border">
-                    <p>{body}</p>
-                </div>
-                <div className="mt-5 p-5 border">
-                    <p>{body}</p>
-                </div>
                 <CommentComponent />
-                <div className="mt-5 p-5 border mb-40">
-                    <p>{body}</p>
-                </div>
                 <CommentForm></CommentForm>
             </div>
         </>

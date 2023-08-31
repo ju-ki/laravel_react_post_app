@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CommentPostedEvent;
 use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -35,6 +36,7 @@ class CommentController extends Controller
         $comment->post_id = $request["id"];
         $comment->user_id = $user;
         $comment->save();
+        CommentPostedEvent::dispatch($comment);
         return $comment;
     }
 
