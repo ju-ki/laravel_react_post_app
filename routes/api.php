@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\PostViewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/comment/{id}', [CommentController::class, 'store']);
 });
 
+Route::get("/views/{id}", [PostViewController::class, "addView"])->middleware('auth:sanctum', 'optional');
+Route::get("/views/counter/{id}", [PostViewController::class, "getViewCount"]);
 Route::get("/home", [PostController::class, "home"]);
 Route::get("/post/{id}", [PostController::class, "show"]);
 Route::get("/comment/{id}", [CommentController::class, "show"]);

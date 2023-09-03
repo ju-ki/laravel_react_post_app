@@ -1,3 +1,34 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@keyframes colorfulAnimation {
+    0% {
+        color: red;
+    }
+
+    20% {
+        color: blue;
+    }
+
+    40% {
+        color: green;
+    }
+
+    60% {
+        color: yellow;
+    }
+
+    80% {
+        color: purple;
+    }
+
+    100% {
+        color: blue;
+    }
+}
+
+.animate-colorful {
+    animation: colorfulAnimation 2s forwards;
+}
