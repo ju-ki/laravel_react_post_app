@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\UpvoteDownvote;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UpvoteDownvoteController extends Controller
 {
@@ -25,9 +28,15 @@ class UpvoteDownvoteController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, string $id)
     {
-        //
+        $userId = Auth::user()->id;
+        DB::table("upvote_downvotes")->upsert([
+            "user_id" => $userId,
+            "post_id" => $id,
+            "is_upvoted" => filter_var($request->is_upvoted, FILTER_VALIDATE_BOOLEAN)
+        ], ["user_id", "post_id"], ["is_upvoted"]);
+        return $id;
     }
 
     /**
@@ -35,7 +44,8 @@ class UpvoteDownvoteController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $count = UpvoteDownvote::where("post_id", $id)->where("is_upvoted", 1)->count();
+        return $count;
     }
 
     /**

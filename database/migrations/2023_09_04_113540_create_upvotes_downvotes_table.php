@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean("is_upvoted");
             $table->foreignIdFor(Post::class, "post_id");
             $table->foreignIdFor(User::class, "user_id");
+            $table->unique(['user_id', 'post_id']);
             $table->timestamps();
         });
     }

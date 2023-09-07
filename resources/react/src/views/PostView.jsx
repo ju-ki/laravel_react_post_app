@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useEffect } from "react";
 import CommentForm from "../components/CommentForm";
 import CommentComponent from "../components/CommentComponent";
-import { useAuthStateContext } from "../context/AuthContext";
 import "../index.css";
 
 export default function PostView() {
@@ -16,6 +15,7 @@ export default function PostView() {
     const [viewCounter, setViewCounter] = useState(0);
     const [categories, setCategories] = useState([]);
     const [dayAgo, setDayAgo] = useState("");
+    const [upVoteCount, setUpVoteCount] = useState(0);
     //api送信を制限するために使用
     let retryCounter = 0;
     const [isUpVoted, setIsUpVoted] = useState(false);
@@ -26,14 +26,20 @@ export default function PostView() {
         if (isDownVoted && !isUpVoted) {
             setIsDownVoted(false);
             setIsAnimating(true);
+            setUpVoteCount((prev) => prev + 1);
+            storeUpVote(1);
             setTimeout(() => {
                 setIsAnimating(false);
                 setIsUpVoted(true);
             }, 1500); // 1.5秒後にカラフルな色から青に変わる
         } else if (isUpVoted) {
             setIsUpVoted(false);
+            storeUpVote(0);
+            setUpVoteCount((prev) => prev - 1);
         } else {
             setIsAnimating(true);
+            setUpVoteCount((prev) => prev + 1);
+            storeUpVote(1);
             setTimeout(() => {
                 setIsAnimating(false);
                 setIsUpVoted(true);
@@ -41,8 +47,23 @@ export default function PostView() {
         }
     };
 
+    const storeUpVote = (is_upvoted) => {
+        axiosClient
+            .post(`/posts/${id}/upvote`, {
+                is_upvoted: !!is_upvoted,
+            })
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
     const handleDownVoteClick = () => {
         if (isUpVoted && !isDownVoted) {
+            setUpVoteCount((prev) => prev - 1);
+            storeUpVote(0);
             setIsUpVoted(false);
             setIsDownVoted(true);
         } else if (isDownVoted) {
@@ -71,6 +92,18 @@ export default function PostView() {
             .get(`/views/${id}`)
             .then(() => {
                 // console.log(response);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
+
+    useEffect(() => {
+        axiosClient
+            .get(`/posts/${id}/upvote/count`)
+            .then((response) => {
+                console.log(response);
+                setUpVoteCount(response.data);
             })
             .catch((err) => {
                 console.log(err);
@@ -143,6 +176,7 @@ export default function PostView() {
                             />
                         </svg>
                     </div>
+                    <div>{upVoteCount}</div>
                     <div
                         onClick={handleDownVoteClick}
                         className={`cursor-pointer p-2 ${
