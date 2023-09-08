@@ -31,11 +31,10 @@ class UpvoteDownvoteController extends Controller
     public function store(Request $request, string $id)
     {
         $userId = Auth::user()->id;
-        DB::table("upvote_downvotes")->upsert([
-            "user_id" => $userId,
-            "post_id" => $id,
-            "is_upvoted" => filter_var($request->is_upvoted, FILTER_VALIDATE_BOOLEAN)
-        ], ["user_id", "post_id"], ["is_upvoted"]);
+        UpvoteDownvote::updateOrCreate(
+            ['user_id' => $userId, 'post_id' => $id],
+            ['is_upvoted' => filter_var($request->is_upvoted, FILTER_VALIDATE_BOOLEAN)]
+        );
         return $id;
     }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PostRequest;
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -133,5 +134,19 @@ class PostController extends Controller
         $name = date("Ymd_His") . '_' . $original;
         $data->file("image")->move("storage/images", $name);
         return $name;
+    }
+
+    public function getPosts(string $id)
+    {
+        $user = User::findOrFail($id);
+        $posts = $user->posts;
+        return $posts;
+    }
+
+    public function getUpvotes(string $id)
+    {
+        $user = User::findOrFail($id);
+        $posts = $user->upvotes;
+        return $posts;
     }
 }

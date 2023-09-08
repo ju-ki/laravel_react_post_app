@@ -7,7 +7,6 @@ import TabContent from "../components/TabContent";
 
 export default function Profile() {
     const [user, setUser] = useState({});
-    const [currentTab, setCurrentTab] = useState(0);
     useEffect(() => {
         axiosClient
             .get("/profile")
@@ -23,9 +22,31 @@ export default function Profile() {
             });
     }, []);
 
-    // const handleTab = (event, newValue) => {
-    //     setCurrentTab(newValue);
-    // };
+    useEffect(() => {
+        axiosClient
+            .get(`/user/23/posts`, {
+                userId: user.id,
+            })
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
+
+    useEffect(() => {
+        axiosClient
+            .get(`/user/23/upvotes`, {
+                userId: user.id,
+            })
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
 
     return (
         <>
@@ -51,12 +72,6 @@ export default function Profile() {
 
             <nav className="my-20 flex justify-center">
                 <TabContent />
-                {/* <button className="text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none text-blue-500 border-b-2 font-medium border-blue-500">
-                    過去に投稿したスレッド
-                </button>
-                <button className="text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none">
-                    upvoteしたスレッド
-                </button> */}
             </nav>
         </>
     );

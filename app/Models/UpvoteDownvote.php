@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class UpvoteDownvote extends Model
 {
     use HasFactory;
+    public $timestamps = true;
     protected $fillable = ["is_upvoted", "user_id", "post_id"];
     public function post()
     {
