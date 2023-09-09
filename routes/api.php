@@ -4,8 +4,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\PostDetailController;
 use App\Http\Controllers\PostViewController;
 use App\Http\Controllers\UpvoteDownvoteController;
+use App\Http\Controllers\UserProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,7 +28,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/profile', [AuthController::class, 'profile']);
+    Route::get('/users/profile-with-activities', [UserProfileController::class, 'getProfileInfo']);
+    Route::get('/post/{id}/detail', [PostDetailController::class, "getPostDetail"]);
     Route::post('/create', [PostController::class, 'store']);
     Route::post('/post/edit/{id}', [PostController::class, 'update']);
     Route::post('/comment/{id}', [CommentController::class, 'store']);
@@ -42,5 +45,3 @@ Route::get("/comment/{id}", [CommentController::class, "show"]);
 Route::get("/category", [CategoryController::class, "fetchCategory"]);
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::get("/user/{id}/posts", [PostController::class, "getPosts"]);
-Route::get("/user/{id}/upvotes", [PostController::class, "getUpvotes"]);

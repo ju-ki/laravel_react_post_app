@@ -75,7 +75,7 @@ class PostController extends Controller
     {
         $post = Post::with("categories")->where("id", $id)->first();
         $post->day_ago = Carbon::parse($post->created_at)->diffForHumans();
-        $post->image_path = asset("storage/images/" . $post->image);
+        // $post->image_path = asset("storage/images/" . $post->image);
         return $post;
     }
 

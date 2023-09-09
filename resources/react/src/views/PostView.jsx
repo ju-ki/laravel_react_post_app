@@ -10,23 +10,27 @@ import "../index.css";
 export default function PostView() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [title, setTitle] = useState("");
-    const [body, setBody] = useState("");
-    const [viewCounter, setViewCounter] = useState(0);
     const [categories, setCategories] = useState([]);
     const [dayAgo, setDayAgo] = useState("");
-    const [upVoteCount, setUpVoteCount] = useState(0);
     //api送信を制限するために使用
-    let retryCounter = 0;
     const [isUpVoted, setIsUpVoted] = useState(false);
     const [isDownVoted, setIsDownVoted] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
+    const [postDetail, setPostDetail] = useState({
+        isUpvoted: 0,
+        post: {},
+        viewCounter: 0,
+        upvotedCount: 0,
+    });
 
     const handleUpVoteClick = () => {
         if (isDownVoted && !isUpVoted) {
             setIsDownVoted(false);
             setIsAnimating(true);
-            setUpVoteCount((prev) => prev + 1);
+            setPostDetail((prevState) => ({
+                ...prevState,
+                upvotedCount: prevState.upvotedCount + 1,
+            }));
             storeUpVote(1);
             setTimeout(() => {
                 setIsAnimating(false);
@@ -35,10 +39,16 @@ export default function PostView() {
         } else if (isUpVoted) {
             setIsUpVoted(false);
             storeUpVote(0);
-            setUpVoteCount((prev) => prev - 1);
+            setPostDetail((prevState) => ({
+                ...prevState,
+                upvotedCount: prevState.upvotedCount - 1,
+            }));
         } else {
             setIsAnimating(true);
-            setUpVoteCount((prev) => prev + 1);
+            setPostDetail((prevState) => ({
+                ...prevState,
+                upvotedCount: prevState.upvotedCount + 1,
+            }));
             storeUpVote(1);
             setTimeout(() => {
                 setIsAnimating(false);
@@ -62,7 +72,10 @@ export default function PostView() {
 
     const handleDownVoteClick = () => {
         if (isUpVoted && !isDownVoted) {
-            setUpVoteCount((prev) => prev - 1);
+            setPostDetail((prevState) => ({
+                ...prevState,
+                upvotedCount: prevState.upvotedCount - 1,
+            }));
             storeUpVote(0);
             setIsUpVoted(false);
             setIsDownVoted(true);
@@ -72,26 +85,18 @@ export default function PostView() {
             setIsDownVoted(true);
         }
     };
-    useEffect(() => {
-        axiosClient
-            .get(`/post/${id}`)
-            .then((response) => {
-                setTitle(response.data.title);
-                setBody(response.data.body);
-                setCategories(response.data.categories);
-                setDayAgo(response.data.day_ago);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }, []);
 
-    //訪問者の情報を保存
     useEffect(() => {
         axiosClient
-            .get(`/views/${id}`)
-            .then(() => {
-                // console.log(response);
+            .get(`/post/${id}/detail`)
+            .then((response) => {
+                setPostDetail({
+                    isUpvoted: response.data.isUpVoted,
+                    post: response.data.post,
+                    viewCounter: response.data.viewCount,
+                    upvotedCount: response.data.upvoteCount,
+                });
+                response.data.isUpVoted && setIsUpVoted(true);
             })
             .catch((err) => {
                 console.log(err);
@@ -99,40 +104,8 @@ export default function PostView() {
     }, []);
 
     useEffect(() => {
-        axiosClient
-            .get(`/posts/${id}/upvote/count`)
-            .then((response) => {
-                console.log(response);
-                setUpVoteCount(response.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }, []);
-
-    const fetchViewCounter = () => {
-        axiosClient
-            .get(`/views/counter/${id}`)
-            .then((response) => {
-                setViewCounter(response.data);
-                retryCounter = 0;
-            })
-            .catch((err) => {
-                if (err.response.status === 429 && retryCounter < 3) {
-                    retryCounter++;
-                    setTimeout(() => {
-                        fetchViewCounter();
-                    }, 5000);
-                } else {
-                    console.log(err);
-                }
-            });
-    };
-
-    //訪問者数を取得
-    // useEffect(() => {
-    //     fetchViewCounter();
-    // }, []);
+        console.log(postDetail);
+    }, [postDetail]);
 
     const onClickEditButton = () => {
         navigate(`/post/edit/${id}`);
@@ -143,7 +116,7 @@ export default function PostView() {
             <Header />
             <div className="container mx-auto px-12 mt-10">
                 <div className="flex justify-between items-center">
-                    <p className="text-6xl">{title}</p>
+                    <p className="text-3xl">{postDetail.post.title}</p>
                     <button
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded"
                         onClick={onClickEditButton}
@@ -151,8 +124,7 @@ export default function PostView() {
                         Edit
                     </button>
                 </div>
-                <p className="mt-5">{dayAgo}</p>
-                <p>{viewCounter} views</p>
+                <p>{postDetail?.viewCounter || 0} views</p>
                 <div className="flex flex-row">
                     <div
                         onClick={handleUpVoteClick}
@@ -176,7 +148,7 @@ export default function PostView() {
                             />
                         </svg>
                     </div>
-                    <div>{upVoteCount}</div>
+                    <div>{postDetail?.upvotedCount || 0}</div>
                     <div
                         onClick={handleDownVoteClick}
                         className={`cursor-pointer p-2 ${
@@ -213,6 +185,7 @@ export default function PostView() {
                         </>
                     ))}
                 </ul>
+                <p className="text-lg">{postDetail.post.body}</p>
 
                 <CommentComponent />
                 <CommentForm></CommentForm>

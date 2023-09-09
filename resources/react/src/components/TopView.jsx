@@ -35,7 +35,7 @@ export default function TopView() {
                                     <div className="flex items-center">
                                         <img
                                             className="w-12 h-12 mr-6"
-                                            src={post.image_path}
+                                            src={post.image}
                                         />
                                         <div>
                                             <p className="text-xl font-bold">
