@@ -23,13 +23,26 @@ class PostController extends Controller
 
     public function home()
     {
-        $allPosts = Post::orderBy("created_at", "desc")->limit(10)->get();
-        $allPosts->transform(function ($post) {
+        $latestPosts = Post::orderBy("created_at", "desc")->limit(5)->get();
+        $latestPosts->transform(function ($post) {
             $post->days_ago = Carbon::parse($post->created_at)->diffForHumans();
             $post->image_path = asset("storage/images/" . $post->image);
             return $post;
         });
-        return $allPosts;
+
+        $popularPosts = Post::withCount([
+            'upvoteDownvotes' => function ($query) {
+                $query->where("is_upvoted", 1);
+            },
+            "postViews"
+        ])->orderByDesc("upvote_downvotes_count")
+            ->orderByDesc("post_views_count")
+            ->limit(10)
+            ->get();
+        return response()->json([
+            "latestPosts" => $latestPosts,
+            "popularPosts" => $popularPosts
+        ]);
     }
 
     /**

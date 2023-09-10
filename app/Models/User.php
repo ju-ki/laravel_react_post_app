@@ -53,4 +53,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(UpvoteDownvote::class)->where("is_upvoted", 1);
     }
+
+    public function postViews()
+    {
+        return $this->hasMany(PostView::class);
+    }
 }

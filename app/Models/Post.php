@@ -32,4 +32,15 @@ class Post extends Model
     {
         return $this->belongsToMany(Category::class);
     }
+
+    public function postViews()
+    {
+        return $this->hasMany(PostView::class);
+    }
+
+    public function upvoteDownvotes()
+    {
+        return $this->hasMany(UpvoteDownvote::class);
+        
+    }
 }
