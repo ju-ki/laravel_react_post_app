@@ -48,7 +48,7 @@ export default function Profile() {
                 <div className="text-2xl">{profileData.user.name}</div>
             </div>
 
-            <nav className="my-20 flex justify-center">
+            <nav className="container mx-auto my-20 flex justify-center">
                 <TabContent
                     upvotedPosts={profileData.upVotedPosts}
                     createdPosts={profileData.createdPosts}

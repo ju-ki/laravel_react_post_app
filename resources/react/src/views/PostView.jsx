@@ -174,8 +174,8 @@ export default function PostView() {
                     </div>
                 </div>
 
-                <ul className="flex mt-5">
-                    {categories.map((category) => (
+                <ul className="flex my-5">
+                    {postDetail.post.categories?.map((category) => (
                         <>
                             <li
                                 className="mr-4 bg-slate-200 text-stone-600 rounded-xl px-3"
