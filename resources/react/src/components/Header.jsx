@@ -9,6 +9,7 @@ import axiosClient from "../axios";
 export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { setToken, setCurrentUser } = useAuthStateContext();
+    const [searchWord, setSearchWord] = useState("");
     const { token } = useAuthStateContext();
     const navigate = useNavigate();
 
@@ -29,6 +30,11 @@ export default function Header() {
             });
     };
 
+    const onSubmit = (event) => {
+        event.preventDefault();
+        console.log(searchWord);
+    };
+
     return (
         <>
             <header className="bg-slate-200">
@@ -36,19 +42,84 @@ export default function Header() {
                     className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
                     aria-label="Global"
                 >
-                    <div className="flex lg:flex-1">
-                        <a href="#" className="-m-1.5 p-1.5">
-                            <span className="sr-only">Your Company</span>
-                            <img
-                                className="h-8 w-auto"
-                                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                                alt=""
-                            />
-                        </a>
-                    </div>
-                    <div className="text-2xl">
+                    <div className="text-2xl ml-4">
                         <NavLink to={"/"}>Laravel Post</NavLink>
                     </div>
+                    <form
+                        className="flex justify-center flex-grow"
+                        onSubmit={onSubmit}
+                    >
+                        <div className="flex items-center">
+                            <div>
+                                <label
+                                    htmlFor="search-dropdown"
+                                    className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+                                >
+                                    Your Email
+                                </label>
+                                <div className="relative">
+                                    <button
+                                        id="dropdown-button"
+                                        data-dropdown-toggle="dropdown"
+                                        className="flex items-center px-4 py-2.5 text-sm font-medium text-gray-900 bg-gray-100 border border-gray-300 rounded-l-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
+                                        type="button"
+                                    >
+                                        All categories
+                                        <svg
+                                            className="w-2.5 h-2.5 ml-2.5"
+                                            aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 10 6"
+                                        >
+                                            <path
+                                                stroke="currentColor"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="m1 1 4 4 4-4"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="relative flex-grow">
+                                <input
+                                    type="search"
+                                    id="search-dropdown"
+                                    value={searchWord}
+                                    onChange={(event) =>
+                                        setSearchWord(event.target.value)
+                                    }
+                                    className="block w-96 p-2.5 text-sm text-gray-700 bg-gray-50 rounded-r-none border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-200 dark:border-gray-600 dark:placeholder-gray-400 dark:text-dark dark:focus:border-blue-500"
+                                    placeholder="Search Mockups, Logos, Design Templates..."
+                                    required
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className="flex items-center px-4 py-3 text-sm font-medium text-white bg-blue-700 rounded-r-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                            >
+                                <svg
+                                    className="w-4 h-4"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                    />
+                                </svg>
+                                <span className="sr-only">Search</span>
+                            </button>
+                        </div>
+                    </form>
+
                     <div className="hidden lg:flex lg:flex-1 lg:justify-end">
                         <a
                             href="#"

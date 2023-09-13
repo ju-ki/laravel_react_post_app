@@ -37,7 +37,7 @@ class PostController extends Controller
             "postViews"
         ])->orderByDesc("upvote_downvotes_count")
             ->orderByDesc("post_views_count")
-            ->limit(10)
+            ->limit(5)
             ->get();
         return response()->json([
             "latestPosts" => $latestPosts,
