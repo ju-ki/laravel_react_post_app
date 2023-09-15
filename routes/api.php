@@ -45,3 +45,4 @@ Route::get("/comment/{id}", [CommentController::class, "show"]);
 Route::get("/category", [CategoryController::class, "fetchCategory"]);
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post("/search/{word}", [PostController::class, "searchResult"]);

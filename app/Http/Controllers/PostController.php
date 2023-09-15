@@ -92,6 +92,14 @@ class PostController extends Controller
         return $post;
     }
 
+
+    public function searchResult(string $word)
+    {
+        //キーワードによる部分一致検索
+        $matchedPosts = Post::where("title", "like", "%" . $word . "%")->get();
+        return $matchedPosts;
+    }
+
     /**
      * Show the form for editing the specified resource.
      */

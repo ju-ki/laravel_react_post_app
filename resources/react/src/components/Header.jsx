@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation, useSearchParams } from "react-router-dom";
 import { Dialog } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAuthStateContext } from "../context/AuthContext";
 import axiosClient from "../axios";
+import { useEffect } from "react";
 
 export default function Header() {
+    const [searchParam] = useSearchParams();
+    const query = searchParam.get("q");
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { setToken, setCurrentUser } = useAuthStateContext();
     const [searchWord, setSearchWord] = useState("");
@@ -30,9 +33,14 @@ export default function Header() {
             });
     };
 
+    useEffect(() => {
+        setSearchWord(query);
+    }, []);
+
     const onSubmit = (event) => {
         event.preventDefault();
         console.log(searchWord);
+        navigate(`/search?q=${searchWord}`);
     };
 
     return (
@@ -48,6 +56,7 @@ export default function Header() {
                     <form
                         className="flex justify-center flex-grow"
                         onSubmit={onSubmit}
+                        action="search"
                     >
                         <div className="flex items-center">
                             <div>

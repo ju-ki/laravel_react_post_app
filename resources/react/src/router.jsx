@@ -6,6 +6,7 @@ import Profile from "./views/Profile";
 import CreatePost from "./views/CreatePost";
 import PostView from "./views/PostView";
 import EditPost from "./views/EditPost";
+import SearchResult from "./views/SearchResult";
 
 const router = createBrowserRouter([
     {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
     {
         path: "post/edit/:id",
         element: <EditPost />,
+    },
+    {
+        path: "search",
+        element: <SearchResult />,
     },
 ]);
 
