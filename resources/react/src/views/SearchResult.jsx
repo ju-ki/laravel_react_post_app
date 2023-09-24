@@ -7,55 +7,73 @@ export default function SearchResult() {
     const location = useLocation();
     const [searchParam] = useSearchParams();
     const query = searchParam.get("q");
+    const cat = searchParam.get("cat");
     const [matchedPosts, setMatchedPosts] = useState([]);
 
     useEffect(() => {
-        console.log(matchedPosts);
-    }, [matchedPosts]);
-
-    useEffect(() => {
-        axiosClient
-            .post(`/search/${query}`)
-            .then((response) => {
-                setMatchedPosts(response.data);
-                console.log(response);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        if (query != null) {
+            axiosClient
+                .post(`/search/word/${query}`)
+                .then((response) => {
+                    setMatchedPosts(response.data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        } else if (cat != null) {
+            axiosClient
+                .post(`/search/category/${cat}`)
+                .then((response) => {
+                    setMatchedPosts(response.data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
     }, [location.search]);
 
     return (
         <>
             <Header />
-            <div>検索結果画面</div>
-            {matchedPosts &&
-                matchedPosts.map((post) => (
-                    <>
-                        <a href={`post/${post.id}`}>
-                            <li
-                                key={post.id}
-                                className="border px-12 py-6 my-4 cursor-pointer flex items-center justify-between"
-                            >
-                                <div className="flex items-center">
-                                    <img
-                                        className="w-12 h-12 mr-6"
-                                        src={post.image}
-                                    />
-                                    <div>
-                                        <p className="text-xl font-bold">
-                                            {post.title}
-                                        </p>
-                                        <p>{post.body}</p>
+            <div className="container mx-auto">
+                <h1 className="text-3xl my-5">
+                    検索結果 : {query ? query : cat}
+                </h1>
+                {matchedPosts.length ? (
+                    matchedPosts.map((post) => (
+                        <>
+                            <a href={`post/${post.id}`}>
+                                <li
+                                    key={post.id}
+                                    className="border px-12 py-6 my-4 cursor-pointer flex items-center justify-between"
+                                >
+                                    <div className="flex items-center">
+                                        <img
+                                            className="w-12 h-12 mr-6"
+                                            src={post.image}
+                                        />
+                                        <div>
+                                            <p className="text-xl font-bold">
+                                                {post.title}
+                                            </p>
+                                            <p>{post.body}</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="float-right">
-                                    {post.days_ago}
-                                </div>
-                            </li>
-                        </a>
+                                    <div className="float-right">
+                                        {post.days_ago}
+                                    </div>
+                                </li>
+                            </a>
+                        </>
+                    ))
+                ) : (
+                    <>
+                        <h1 className="text-center text-2xl">
+                            指定された単語に一致する結果は見つかりませんでした!
+                        </h1>
                     </>
-                ))}
+                )}
+            </div>
         </>
     );
 }

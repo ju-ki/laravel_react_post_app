@@ -13,8 +13,33 @@ export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { setToken, setCurrentUser } = useAuthStateContext();
     const [searchWord, setSearchWord] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [categories, setCategories] = useState([]);
     const { token } = useAuthStateContext();
     const navigate = useNavigate();
+
+    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+    const location = useLocation();
+
+    useEffect(() => {
+        setIsDropdownVisible(false); // 画面遷移ごとにドロップボックスを閉じる
+    }, [location]);
+
+    // ボタンクリックのハンドラ
+    const toggleDropdown = () => {
+        setIsDropdownVisible((prevState) => !prevState);
+    };
+
+    useEffect(() => {
+        axiosClient
+            .get("/category")
+            .then((response) => {
+                setCategories(response.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
 
     const logout = (event) => {
         event.preventDefault();
@@ -39,8 +64,12 @@ export default function Header() {
 
     const onSubmit = (event) => {
         event.preventDefault();
-        console.log(searchWord);
         navigate(`/search?q=${searchWord}`);
+    };
+
+    const onClickCategory = (currentCategory) => {
+        setSelectedCategory(currentCategory);
+        navigate(`/search?cat=${currentCategory}`);
     };
 
     return (
@@ -72,8 +101,9 @@ export default function Header() {
                                         data-dropdown-toggle="dropdown"
                                         className="flex items-center px-4 py-2.5 text-sm font-medium text-gray-900 bg-gray-100 border border-gray-300 rounded-l-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
                                         type="button"
+                                        onClick={toggleDropdown}
                                     >
-                                        All categories
+                                        All Categories
                                         <svg
                                             className="w-2.5 h-2.5 ml-2.5"
                                             aria-hidden="true"
@@ -90,6 +120,42 @@ export default function Header() {
                                             />
                                         </svg>
                                     </button>
+                                    {isDropdownVisible && (
+                                        <div
+                                            id="dropdown"
+                                            className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 max-h-60 overflow-y-auto"
+                                        >
+                                            <div
+                                                className="py-1"
+                                                role="menu"
+                                                aria-orientation="vertical"
+                                                aria-labelledby="options-menu"
+                                            >
+                                                <ul className="divide-y divide-gray-200">
+                                                    {categories.length > 0 &&
+                                                        categories.map(
+                                                            (category) => (
+                                                                <li
+                                                                    key={
+                                                                        category.id
+                                                                    }
+                                                                    onClick={() =>
+                                                                        onClickCategory(
+                                                                            category.name
+                                                                        )
+                                                                    }
+                                                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer dark:hover:bg-gray-700"
+                                                                >
+                                                                    {
+                                                                        category.name
+                                                                    }
+                                                                </li>
+                                                            )
+                                                        )}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <div className="relative flex-grow">

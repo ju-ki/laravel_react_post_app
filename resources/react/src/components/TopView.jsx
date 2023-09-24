@@ -15,7 +15,6 @@ export default function TopView() {
         axiosClient
             .get("/home")
             .then((response) => {
-                console.log(response);
                 setTopPosts({
                     latestPosts: response.data.latestPosts,
                     popularPosts: response.data.popularPosts,
@@ -51,7 +50,7 @@ export default function TopView() {
                                                 <p>{post.body}</p>
                                             </div>
                                         </div>
-                                        <div className="float-right">
+                                        <div className="flex-shrink-0 whitespace-nowrap">
                                             {post.days_ago}
                                         </div>
                                     </li>

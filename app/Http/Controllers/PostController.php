@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Log\Logger;
 use Throwable;
 
 class PostController extends Controller
@@ -93,10 +94,18 @@ class PostController extends Controller
     }
 
 
-    public function searchResult(string $word)
+    public function searchResultByKeyword(string $word)
     {
         //キーワードによる部分一致検索
         $matchedPosts = Post::where("title", "like", "%" . $word . "%")->get();
+        return $matchedPosts;
+    }
+
+    public function searchResultByCategory(string $cat)
+    {
+        $matchedPosts = Post::whereHas("categories", function ($query) use ($cat) {
+            $query->select("name")->where("name", $cat);
+        })->get();
         return $matchedPosts;
     }
 

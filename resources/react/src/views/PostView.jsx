@@ -23,6 +23,10 @@ export default function PostView() {
         upvotedCount: 0,
     });
 
+    const onClickCategory = (currentCategory) => {
+        navigate(`/search?cat=${currentCategory}`);
+    };
+
     const handleUpVoteClick = () => {
         if (isDownVoted && !isUpVoted) {
             setIsDownVoted(false);
@@ -178,8 +182,11 @@ export default function PostView() {
                     {postDetail.post.categories?.map((category) => (
                         <>
                             <li
-                                className="mr-4 bg-slate-200 text-stone-600 rounded-xl px-3"
+                                className="mr-4 cursor-pointer bg-slate-200 text-stone-600 rounded-xl px-3"
                                 key={category.id}
+                                onClick={() => {
+                                    onClickCategory(category.name);
+                                }}
                             >
                                 {category.name}
                             </li>
