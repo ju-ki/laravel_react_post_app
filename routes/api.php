@@ -46,4 +46,5 @@ Route::get("/category", [CategoryController::class, "fetchCategory"]);
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post("/search/word/{word}", [PostController::class, "searchResultByKeyword"]);
+Route::get("/search/all", [PostController::class, "searchAllResults"]);
 Route::post("/search/category/{cat}", [PostController::class, "searchResultByCategory"]);

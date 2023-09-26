@@ -64,7 +64,11 @@ export default function Header() {
 
     const onSubmit = (event) => {
         event.preventDefault();
-        navigate(`/search?q=${searchWord}`);
+        if (!searchWord) {
+            navigate(`/search?all`);
+        } else {
+            navigate(`/search?q=${searchWord}`);
+        }
     };
 
     const onClickCategory = (currentCategory) => {
@@ -168,7 +172,6 @@ export default function Header() {
                                     }
                                     className="block w-96 p-2.5 text-sm text-gray-700 bg-gray-50 rounded-r-none border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-200 dark:border-gray-600 dark:placeholder-gray-400 dark:text-dark dark:focus:border-blue-500"
                                     placeholder="Search Mockups, Logos, Design Templates..."
-                                    required
                                 />
                             </div>
                             <button

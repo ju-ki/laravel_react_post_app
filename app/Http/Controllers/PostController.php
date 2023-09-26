@@ -94,10 +94,13 @@ class PostController extends Controller
     }
 
 
-    public function searchResultByKeyword(string $word)
+    public function searchResultByKeyword(string $word = null)
     {
+        if (!$word) {
+            return Post::all();
+        }
         //キーワードによる部分一致検索
-        $matchedPosts = Post::where("title", "like", "%" . $word . "%")->get();
+        $matchedPosts = Post::where("title", "like", "%" . $word . "%")->paginate(5);
         return $matchedPosts;
     }
 
@@ -105,8 +108,14 @@ class PostController extends Controller
     {
         $matchedPosts = Post::whereHas("categories", function ($query) use ($cat) {
             $query->select("name")->where("name", $cat);
-        })->get();
+        })->paginate(5);
         return $matchedPosts;
+    }
+
+
+    public function searchAllResults()
+    {
+        return Post::paginate(5);
     }
 
     /**
