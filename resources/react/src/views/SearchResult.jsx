@@ -3,7 +3,6 @@ import Header from "../components/Header";
 import { useLocation, useSearchParams } from "react-router-dom";
 import axiosClient from "../axios";
 import { useState } from "react";
-import { all } from "axios";
 import Paginate from "../components/Paginate";
 export default function SearchResult() {
     const location = useLocation();

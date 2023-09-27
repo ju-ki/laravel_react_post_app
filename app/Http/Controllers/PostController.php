@@ -179,6 +179,7 @@ class PostController extends Controller
     {
         $user = User::findOrFail($id);
         $posts = $user->posts;
+        $posts->day_ago = Carbon::parse($posts->created_at)->diffForHumans();
         return $posts;
     }
 
@@ -186,6 +187,7 @@ class PostController extends Controller
     {
         $user = User::findOrFail($id);
         $posts = $user->upvotes;
+        $posts->day_ago = Carbon::parse($posts->created_at)->diffForHumans();
         return $posts;
     }
 }
