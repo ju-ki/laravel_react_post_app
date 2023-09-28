@@ -14,7 +14,7 @@ class UserProfileController extends Controller
     public function getProfileInfo()
     {
         $user = Auth::user();
-        $upVotedPosts = $user->upvotes->map(function ($upvote) {
+        $upVotedPosts = $user->upvotes()->paginate(5)->map(function ($upvote) {
             $totalLikes = UpvoteDownvote::where('post_id', $upvote->post_id)
                 ->where('is_upvoted', 1)
                 ->count();
@@ -26,7 +26,7 @@ class UserProfileController extends Controller
 
 
 
-        $createdPosts = $user->posts;
+        $createdPosts = $user->posts()->paginate(5);
         $createdPosts->transform(function ($post) {
             $post->days_ago = Carbon::parse($post->created_at)->diffForHumans();
             return $post;

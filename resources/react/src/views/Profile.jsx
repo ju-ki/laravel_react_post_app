@@ -6,25 +6,41 @@ import Header from "../components/Header";
 import TabContent from "../components/TabContent";
 
 export default function Profile() {
+    const [currentPage, setCurrentPage] = useState(1);
     const [profileData, setProfileData] = useState({
         user: {},
         upVotedPosts: [],
         createdPosts: [],
     });
+
     useEffect(() => {
         axiosClient
-            .get("/users/profile-with-activities")
+            .get(`/users/profile-with-activities?page=${currentPage}`)
             .then((response) => {
                 console.log("success");
                 console.log(response);
-                setProfileData(response.data);
+
+                setProfileData({
+                    user: response.data.user,
+                    upVotedPosts: response.data.upVotedPosts,
+                    createdPosts: response.data.createdPosts,
+                });
             })
             .catch((err) => {
                 console.log("エラー");
                 console.log(err);
                 return err;
             });
-    }, []);
+    }, [currentPage]);
+
+    const handleNextPage = () => {
+        console.log("next");
+        setCurrentPage((prevPage) => prevPage + 1);
+    };
+
+    const handlePrevPage = () => {
+        setCurrentPage((prevPage) => prevPage - 1);
+    };
 
     return (
         <>
@@ -52,6 +68,10 @@ export default function Profile() {
                 <TabContent
                     upvotedPosts={profileData.upVotedPosts}
                     createdPosts={profileData.createdPosts}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    handleNextPage={handleNextPage}
+                    handlePrevPage={handlePrevPage}
                 />
             </nav>
         </>
