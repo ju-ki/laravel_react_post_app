@@ -33,7 +33,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/create', [PostController::class, 'store']);
     Route::post('/post/edit/{id}', [PostController::class, 'update']);
     Route::post('/comment/{id}', [CommentController::class, 'store']);
+    Route::patch('/comment/{id}/update', [CommentController::class, "edit"]);
     Route::post('/posts/{id}/upvote/', [UpvoteDownvoteController::class, 'store']);
+    Route::get("/user/id", [AuthController::class, "fetchUserId"]);
 });
 
 Route::get('/posts/{id}/upvote/count', [UpvoteDownvoteController::class, 'show']);

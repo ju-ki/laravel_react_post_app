@@ -14,7 +14,9 @@ class UserProfileController extends Controller
     public function getProfileInfo()
     {
         $user = Auth::user();
-        $upVotedPosts = $user->upvotes()->paginate(5)->map(function ($upvote) {
+        $upVotedPostsPaginator = $user->upvotes()->paginate(5);
+
+        $upVotedPosts = $upVotedPostsPaginator->getCollection()->map(function ($upvote) {
             $totalLikes = UpvoteDownvote::where('post_id', $upvote->post_id)
                 ->where('is_upvoted', 1)
                 ->count();
@@ -24,6 +26,7 @@ class UserProfileController extends Controller
             return $post;
         });
 
+        $upVotedPostsPaginator->setCollection($upVotedPosts);
 
 
         $createdPosts = $user->posts()->paginate(5);
@@ -38,7 +41,7 @@ class UserProfileController extends Controller
 
         return response()->json([
             "user" => $user,
-            "upVotedPosts" => $upVotedPosts,
+            "upVotedPosts" => $upVotedPostsPaginator,
             "createdPosts" => $createdPosts,
         ]);
     }

@@ -10,8 +10,10 @@ import "../index.css";
 export default function PostView() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [userId, setUserId] = useState(null);
     const [categories, setCategories] = useState([]);
-    const [dayAgo, setDayAgo] = useState("");
+    const [body, setBody] = useState("");
+    const [commentId, setCommentId] = useState("");
     //api送信を制限するために使用
     const [isUpVoted, setIsUpVoted] = useState(false);
     const [isDownVoted, setIsDownVoted] = useState(false);
@@ -22,6 +24,11 @@ export default function PostView() {
         viewCounter: 0,
         upvotedCount: 0,
     });
+    const [isEditing, setIsEditing] = useState(false);
+
+    const toggleEditing = () => {
+        setIsEditing((prevState) => !prevState);
+    };
 
     const onClickCategory = (currentCategory) => {
         navigate(`/search?cat=${currentCategory}`);
@@ -92,9 +99,20 @@ export default function PostView() {
 
     useEffect(() => {
         axiosClient
-            .get(`/post/${id}/detail`)
+            .get("/user/id")
             .then((response) => {
                 console.log(response);
+                setUserId(response.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
+
+    useEffect(() => {
+        axiosClient
+            .get(`/post/${id}/detail`)
+            .then((response) => {
                 setPostDetail({
                     isUpvoted: response.data.isUpVoted,
                     post: response.data.post,
@@ -122,12 +140,14 @@ export default function PostView() {
             <div className="container mx-auto px-12 mt-10">
                 <div className="flex justify-between items-center">
                     <p className="text-3xl">{postDetail.post.title}</p>
-                    <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded"
-                        onClick={onClickEditButton}
-                    >
-                        Edit
-                    </button>
+                    {postDetail.post.user_id == userId && (
+                        <button
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded"
+                            onClick={onClickEditButton}
+                        >
+                            Edit
+                        </button>
+                    )}
                 </div>
                 <p>{postDetail?.viewCounter || 0} views</p>
                 <div className="flex flex-row">
@@ -195,8 +215,20 @@ export default function PostView() {
                 </ul>
                 <p className="text-lg">{postDetail.post.body}</p>
 
-                <CommentComponent />
-                <CommentForm></CommentForm>
+                <CommentComponent
+                    userId={userId}
+                    body={body}
+                    setBody={setBody}
+                    setCommentId={setCommentId}
+                    toggleEditing={toggleEditing}
+                />
+                <CommentForm
+                    comment={body}
+                    setComment={setBody}
+                    commentId={commentId}
+                    isEditing={isEditing}
+                    toggleEditing={toggleEditing}
+                ></CommentForm>
             </div>
         </>
     );

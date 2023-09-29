@@ -72,7 +72,11 @@ class AuthController extends Controller
     public function profile(Request $request)
     {
         return Auth::user();
-        // $user = $request->user();
-        // return $user;
+    }
+
+
+    public function fetchUserId()
+    {
+        return Auth::user()->id;
     }
 }

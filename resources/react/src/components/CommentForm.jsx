@@ -3,9 +3,21 @@ import axiosClient from "../axios";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 
-export default function CommentForm() {
+export default function CommentForm({
+    comment,
+    setComment,
+    commentId,
+    isEditing,
+    toggleEditing,
+}) {
     const id = useParams();
     const [body, setBody] = useState("");
+    const [updatedCommentId, setUpdatedCommentId] = useState("");
+
+    useEffect(() => {
+        setBody(comment);
+        setUpdatedCommentId(commentId);
+    }, [comment]);
 
     const onSubmit = (e) => {
         e.preventDefault();
@@ -14,15 +26,27 @@ export default function CommentForm() {
             id: id["id"],
             body: body,
         };
-        console.log(payload);
-        axiosClient
-            .post(`/comment/${id}`, payload)
-            .then((response) => {
-                console.log(response);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        if (!isEditing) {
+            axiosClient
+                .post(`/comment/${id}`, payload)
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        } else {
+            payload["commentId"] = updatedCommentId;
+            axiosClient
+                .patch(`/comment/${id}/update`, payload)
+                .then((response) => {
+                    console.log(response);
+                    setComment(response.data.body);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
     };
     return (
         <>
@@ -37,12 +61,23 @@ export default function CommentForm() {
                         value={body}
                         onChange={(e) => setBody(e.target.value)}
                     ></textarea>
-                    <button
-                        className="h-12 px-10 mt-auto mb-0 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600"
-                        type="submit"
-                    >
-                        送信
-                    </button>
+                    <div className="flex justify-center space-x-4">
+                        {isEditing && (
+                            <button
+                                className="h-12 px-10 mt-auto mb-0 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600"
+                                type="button" // "submit"から"button"に変更して、実際のフォーム送信を避ける
+                                onClick={toggleEditing} // 編集モードをトグル
+                            >
+                                キャンセル
+                            </button>
+                        )}
+                        <button
+                            className="h-12 px-10 mt-auto mb-0 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600"
+                            type="submit"
+                        >
+                            送信
+                        </button>
+                    </div>
                 </div>
             </form>
         </>

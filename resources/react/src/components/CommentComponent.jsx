@@ -6,9 +6,15 @@ import { useParams } from "react-router-dom";
 import axiosClient from "../axios";
 import { useState } from "react";
 
-export default function CommentComponent() {
+export default function CommentComponent({
+    userId,
+    body,
+    setBody,
+    setCommentId,
+    toggleEditing,
+}) {
     const { id } = useParams();
-    const [comment, setComment] = useState([]);
+    const [comment, setComment] = useState("");
     const echo = new Echo({
         broadcaster: "pusher",
         key: "114a4dd3c3e065085bf3",
@@ -21,7 +27,18 @@ export default function CommentComponent() {
         return () => {
             echo.disconnect();
         };
-    });
+    }, []);
+
+    useEffect(() => {
+        axiosClient
+            .get(`/comment/${id}`)
+            .then((response) => {
+                setComment(response.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, [body]);
 
     function timeAgo(date) {
         const now = new Date();
@@ -53,11 +70,18 @@ export default function CommentComponent() {
         });
     };
 
+    const onClickCommentEditButton = (comment, id) => {
+        return () => {
+            setBody(comment);
+            setCommentId(id);
+            toggleEditing();
+        };
+    };
+
     useEffect(() => {
         axiosClient
             .get(`/comment/${id}`)
             .then((response) => {
-                console.log(response);
                 setComment(response.data);
             })
             .catch((err) => {
@@ -82,6 +106,17 @@ export default function CommentComponent() {
                                         <p className="text-xl font-semibold">
                                             {elem.user.name}
                                         </p>
+                                        {elem.user_id == userId && (
+                                            <button
+                                                className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2  mx-3 border border-blue-700 rounded"
+                                                onClick={onClickCommentEditButton(
+                                                    elem.body,
+                                                    elem.id
+                                                )}
+                                            >
+                                                Edit
+                                            </button>
+                                        )}
                                     </div>
                                     <div className="flex items-center text-gray-500 text-sm">
                                         <svg

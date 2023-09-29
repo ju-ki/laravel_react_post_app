@@ -55,9 +55,11 @@ class CommentController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Request $request)
     {
-        //
+        Comment::where("id", $request->commentId)->update(["body" => $request->body]);
+        $comment = Comment::where("id", $request->commentId)->first();
+        return response()->json($comment, 201);
     }
 
     /**
