@@ -36,8 +36,9 @@ class PostController extends Controller
                 $query->where("is_upvoted", 1);
             },
             "postViews"
-        ])->orderByDesc("upvote_downvotes_count")
+        ])
             ->orderByDesc("post_views_count")
+            ->orderByDesc("upvote_downvotes_count")
             ->limit(5)
             ->get();
         return response()->json([

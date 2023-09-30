@@ -1,45 +1,11 @@
-import Echo from "laravel-echo";
-import Pusher from "pusher-js";
-window.Pusher = Pusher;
-import { useEffect } from "react";
-import { useParams } from "react-router-dom";
-import axiosClient from "../axios";
-import { useState } from "react";
-
 export default function CommentComponent({
     userId,
-    body,
     setBody,
     setCommentId,
-    toggleEditing,
+    editingCommentId,
+    handleEditCommentId,
+    comments,
 }) {
-    const { id } = useParams();
-    const [comment, setComment] = useState("");
-    const echo = new Echo({
-        broadcaster: "pusher",
-        key: "114a4dd3c3e065085bf3",
-        cluster: "ap3",
-        encrypted: true,
-    });
-
-    useEffect(() => {
-        handleRealTime();
-        return () => {
-            echo.disconnect();
-        };
-    }, []);
-
-    useEffect(() => {
-        axiosClient
-            .get(`/comment/${id}`)
-            .then((response) => {
-                setComment(response.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }, [body]);
-
     function timeAgo(date) {
         const now = new Date();
         const diffInSeconds = Math.floor((now - date) / 1000);
@@ -55,44 +21,19 @@ export default function CommentComponent({
         }
     }
 
-    const handleRealTime = () => {
-        echo.channel("comments").listen("CommentPostedEvent", (event) => {
-            console.log(event);
-            axiosClient
-                .get(`/comment/${id}`)
-                .then((response) => {
-                    console.log(response);
-                    setComment(response.data);
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        });
-    };
-
     const onClickCommentEditButton = (comment, id) => {
         return () => {
             setBody(comment);
             setCommentId(id);
-            toggleEditing();
+            handleEditCommentId(id);
         };
     };
 
-    useEffect(() => {
-        axiosClient
-            .get(`/comment/${id}`)
-            .then((response) => {
-                setComment(response.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }, []);
     return (
         <>
             <ul className="my-20 mb-64">
-                {comment &&
-                    comment.map((elem) => (
+                {comments &&
+                    comments.map((elem) => (
                         <>
                             <li
                                 key={elem.id}

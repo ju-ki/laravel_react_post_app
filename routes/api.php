@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
@@ -36,6 +37,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/comment/{id}/update', [CommentController::class, "edit"]);
     Route::post('/posts/{id}/upvote/', [UpvoteDownvoteController::class, 'store']);
     Route::get("/user/id", [AuthController::class, "fetchUserId"]);
+    Route::get("/announcement/list", [AnnouncementController::class, "list"]);
+    // Route::get("/{announcement}", [AnnouncementController::class, "show"])->name('announcement.show');;
 });
 
 Route::get('/posts/{id}/upvote/count', [UpvoteDownvoteController::class, 'show']);

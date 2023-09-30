@@ -17,6 +17,7 @@ export default function Header() {
     const [categories, setCategories] = useState([]);
     const { token } = useAuthStateContext();
     const navigate = useNavigate();
+    const [announcements, setAnnouncements] = useState({});
 
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
     const location = useLocation();
@@ -29,6 +30,17 @@ export default function Header() {
     const toggleDropdown = () => {
         setIsDropdownVisible((prevState) => !prevState);
     };
+
+    useEffect(() => {
+        axiosClient
+            .get("/announcement/list")
+            .then((response) => {
+                console.log(response.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
 
     useEffect(() => {
         axiosClient

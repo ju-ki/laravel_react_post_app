@@ -9,6 +9,8 @@ export default function CommentForm({
     commentId,
     isEditing,
     toggleEditing,
+    fetchComments,
+    handleEditCommentId,
 }) {
     const id = useParams();
     const [body, setBody] = useState("");
@@ -31,6 +33,8 @@ export default function CommentForm({
                 .post(`/comment/${id}`, payload)
                 .then((response) => {
                     console.log(response);
+                    setBody("");
+                    fetchComments();
                 })
                 .catch((err) => {
                     console.log(err);
@@ -41,7 +45,8 @@ export default function CommentForm({
                 .patch(`/comment/${id}/update`, payload)
                 .then((response) => {
                     console.log(response);
-                    setComment(response.data.body);
+                    setBody("");
+                    fetchComments();
                 })
                 .catch((err) => {
                     console.log(err);
@@ -65,8 +70,8 @@ export default function CommentForm({
                         {isEditing && (
                             <button
                                 className="h-12 px-10 mt-auto mb-0 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600"
-                                type="button" // "submit"から"button"に変更して、実際のフォーム送信を避ける
-                                onClick={toggleEditing} // 編集モードをトグル
+                                type="button"
+                                onClick={() => handleEditCommentId(commentId)}
                             >
                                 キャンセル
                             </button>

@@ -18,7 +18,7 @@ class PostFactory extends Factory
     {
         return [
             'title' => fake()->realText(fake()->numberBetween(10, 100)),
-            'body' => fake()->realText(fake()->numberBetween(2, 255)),
+            'body' => fake()->realText(fake()->numberBetween(10, 255)),
             'image' => fake()->imageUrl(),
             'user_id' => fake()->randomNumber(1, 11),
             'created_at' => fake()->dateTimeBetween("-1month", "now"),

@@ -1,3 +1,6 @@
+import Echo from "laravel-echo";
+import Pusher from "pusher-js";
+window.Pusher = Pusher;
 import Header from "../components/Header";
 import axiosClient from "../axios";
 import { useNavigate, useParams } from "react-router-dom";
@@ -6,14 +9,18 @@ import { useEffect } from "react";
 import CommentForm from "../components/CommentForm";
 import CommentComponent from "../components/CommentComponent";
 import "../index.css";
+import { useAuthStateContext } from "../context/AuthContext";
 
 export default function PostView() {
+    const { token } = useAuthStateContext();
     const { id } = useParams();
     const navigate = useNavigate();
     const [userId, setUserId] = useState(null);
     const [categories, setCategories] = useState([]);
     const [body, setBody] = useState("");
+    const [comments, setComments] = useState([]);
     const [commentId, setCommentId] = useState("");
+    const [formComment, setFormComment] = useState("");
     //api送信を制限するために使用
     const [isUpVoted, setIsUpVoted] = useState(false);
     const [isDownVoted, setIsDownVoted] = useState(false);
@@ -25,10 +32,61 @@ export default function PostView() {
         upvotedCount: 0,
     });
     const [isEditing, setIsEditing] = useState(false);
+    const [editingCommentId, setEditingCommentId] = useState(null);
+
+    // 関数の変更
+    const handleEditCommentId = (commentId) => {
+        if (editingCommentId === commentId) {
+            setEditingCommentId(null);
+        } else {
+            setEditingCommentId(commentId);
+        }
+    };
 
     const toggleEditing = () => {
         setIsEditing((prevState) => !prevState);
     };
+    const echo = new Echo({
+        broadcaster: "pusher",
+        key: "114a4dd3c3e065085bf3",
+        cluster: "ap3",
+        encrypted: true,
+    });
+
+    const fetchComments = () => {
+        axiosClient
+            .get(`/comment/${id}`)
+            .then((response) => {
+                console.log(response.data);
+                setComments(response.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+    useEffect(() => {
+        fetchComments();
+        // handleRealTime();
+        // return () => {
+        //     echo.disconnect();
+        // };
+    }, []);
+
+    // const handleRealTime = () => {
+    //     echo.channel("comments").listen("CommentPostedEvent", (event) => {
+    //         console.log(event);
+    //         axiosClient
+    //             .get(`/comment/${id}`)
+    //             .then((response) => {
+    //                 console.log("aa");
+    //                 console.log(response);
+    //                 setComments(response.data);
+    //             })
+    //             .catch((err) => {
+    //                 console.log(err);
+    //             });
+    //     });
+    // };
 
     const onClickCategory = (currentCategory) => {
         navigate(`/search?cat=${currentCategory}`);
@@ -98,15 +156,17 @@ export default function PostView() {
     };
 
     useEffect(() => {
-        axiosClient
-            .get("/user/id")
-            .then((response) => {
-                console.log(response);
-                setUserId(response.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        if (token) {
+            axiosClient
+                .get("/user/id")
+                .then((response) => {
+                    console.log(response);
+                    setUserId(response.data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
     }, []);
 
     useEffect(() => {
@@ -125,10 +185,6 @@ export default function PostView() {
                 console.log(err);
             });
     }, []);
-
-    useEffect(() => {
-        console.log(postDetail);
-    }, [postDetail]);
 
     const onClickEditButton = () => {
         navigate(`/post/edit/${id}`);
@@ -217,17 +273,21 @@ export default function PostView() {
 
                 <CommentComponent
                     userId={userId}
-                    body={body}
-                    setBody={setBody}
+                    setBody={setFormComment}
                     setCommentId={setCommentId}
-                    toggleEditing={toggleEditing}
+                    // toggleEditing={toggleEditing}
+                    editingCommentId={editingCommentId}
+                    handleEditCommentId={handleEditCommentId}
+                    comments={comments}
                 />
                 <CommentForm
-                    comment={body}
-                    setComment={setBody}
+                    comment={formComment}
+                    setComment={setFormComment}
                     commentId={commentId}
-                    isEditing={isEditing}
+                    isEditing={editingCommentId !== null}
                     toggleEditing={toggleEditing}
+                    fetchComments={fetchComments}
+                    handleEditCommentId={handleEditCommentId}
                 ></CommentForm>
             </div>
         </>
