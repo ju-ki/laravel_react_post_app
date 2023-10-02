@@ -32,14 +32,16 @@ export default function Header() {
     };
 
     useEffect(() => {
-        axiosClient
-            .get("/announcement/list")
-            .then((response) => {
-                console.log(response.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        if (token) {
+            axiosClient
+                .get("/announcement/list")
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
     }, []);
 
     useEffect(() => {

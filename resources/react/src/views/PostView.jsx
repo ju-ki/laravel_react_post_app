@@ -46,23 +46,25 @@ export default function PostView() {
     const toggleEditing = () => {
         setIsEditing((prevState) => !prevState);
     };
-    const echo = new Echo({
-        broadcaster: "pusher",
-        key: "114a4dd3c3e065085bf3",
-        cluster: "ap3",
-        encrypted: true,
-    });
+    // const echo = new Echo({
+    //     broadcaster: "pusher",
+    //     key: "114a4dd3c3e065085bf3",
+    //     cluster: "ap3",
+    //     encrypted: true,
+    // });
 
     const fetchComments = () => {
-        axiosClient
-            .get(`/comment/${id}`)
-            .then((response) => {
-                console.log(response.data);
-                setComments(response.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        if (token) {
+            axiosClient
+                .get(`/comment/${id}`)
+                .then((response) => {
+                    console.log(response.data);
+                    setComments(response.data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
     };
     useEffect(() => {
         fetchComments();
@@ -127,16 +129,18 @@ export default function PostView() {
     };
 
     const storeUpVote = (is_upvoted) => {
-        axiosClient
-            .post(`/posts/${id}/upvote`, {
-                is_upvoted: !!is_upvoted,
-            })
-            .then((response) => {
-                console.log(response);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        if (token) {
+            axiosClient
+                .post(`/posts/${id}/upvote`, {
+                    is_upvoted: !!is_upvoted,
+                })
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
     };
 
     const handleDownVoteClick = () => {
