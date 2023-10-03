@@ -15,7 +15,8 @@ class PostDetailController extends Controller
     //
     public function getPostDetail(string $id)
     {
-        $userId = Auth::user()->id;
+        // $userId = Auth::user()->id;
+        $userId = 1;
         $post = Post::with("categories")->where("id", $id)->first();
         $post->day_ago = Carbon::parse($post->created_at)->diffForHumans();
         $viewCount = DB::table("post_views")->where("post_id", $id)->count();

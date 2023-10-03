@@ -6,10 +6,12 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 
 class NewCommentNotification extends Notification
 {
     use Queueable;
+
     protected $comment;
 
     /**
@@ -28,7 +30,7 @@ class NewCommentNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['database'];
     }
 
     /**
@@ -42,12 +44,15 @@ class NewCommentNotification extends Notification
             ->line('Thank you for using our application!');
     }
 
-
     public function toDatabase($notifiable)
     {
+        Log::info($notifiable);
+        Log::info($this->comment);
         return [
-            "message" => "新しいコメントが追加されました:" . $this->comment->body,
-            "comment_id" => $this->comment->id
+            "title" => "新しいコメント",
+            "body" => "新しいコメントが追加されました:" . $this->comment->body,
+            "post_id" => $this->comment->post_id,
+            "user_id" => $this->comment->user_id
         ];
     }
 

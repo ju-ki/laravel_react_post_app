@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Events\CommentPostedEvent;
 use App\Models\Comment;
+use App\Models\Post;
 use App\Models\User;
+use App\Notifications\NewCommentNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class CommentController extends Controller
 {
@@ -36,7 +39,13 @@ class CommentController extends Controller
         $comment->post_id = $request["id"];
         $comment->user_id = $user;
         $comment->save();
-        CommentPostedEvent::dispatch($comment);
+
+        $post = Post::find($request["id"]);
+        Log::info($post);
+        $post->user->notify(new NewCommentNotification($comment));
+        Log::info($post->user);
+        Log::info($post->user->notify(new NewCommentNotification($comment)));
+
         return $comment;
     }
 
