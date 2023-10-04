@@ -41,10 +41,7 @@ class CommentController extends Controller
         $comment->save();
 
         $post = Post::find($request["id"]);
-        Log::info($post);
         $post->user->notify(new NewCommentNotification($comment));
-        Log::info($post->user);
-        Log::info($post->user->notify(new NewCommentNotification($comment)));
 
         return $comment;
     }

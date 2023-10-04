@@ -46,7 +46,6 @@ class NewCommentNotification extends Notification
 
     public function toDatabase($notifiable)
     {
-        Log::info($notifiable);
         Log::info($this->comment);
         return [
             "title" => "新しいコメント",
