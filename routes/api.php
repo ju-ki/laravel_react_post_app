@@ -4,6 +4,7 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostDetailController;
 use App\Http\Controllers\PostViewController;
@@ -36,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/comment/{id}/update', [CommentController::class, "edit"]);
     Route::post('/posts/{id}/upvote/', [UpvoteDownvoteController::class, 'store']);
     Route::get("/user/id", [AuthController::class, "fetchUserId"]);
+    Route::get("/user/notification", [NotificationController::class, "show"]);
     Route::get("/announcement/list", [AnnouncementController::class, "list"]);
     // Route::get("/{announcement}", [AnnouncementController::class, "show"])->name('announcement.show');;
 });

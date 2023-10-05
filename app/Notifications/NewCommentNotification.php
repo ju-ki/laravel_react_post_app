@@ -13,14 +13,16 @@ class NewCommentNotification extends Notification
     use Queueable;
 
     protected $comment;
+    protected $postUserId;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($comment)
+    public function __construct($comment, $postUserId)
     {
         //
         $this->comment = $comment;
+        $this->postUserId = $postUserId;
     }
 
     /**
@@ -51,7 +53,7 @@ class NewCommentNotification extends Notification
             "title" => "新しいコメント",
             "body" => "新しいコメントが追加されました:" . $this->comment->body,
             "post_id" => $this->comment->post_id,
-            "user_id" => $this->comment->user_id
+            "user_id" => $this->postUserId
         ];
     }
 

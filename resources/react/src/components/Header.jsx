@@ -20,6 +20,9 @@ export default function Header() {
     const [announcements, setAnnouncements] = useState({});
 
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+    const [notifications, setNotifications] = useState([]);
+    const [notificationCount, setNotificationCount] = useState(0);
+    const [dropdownVisible, setDropdownVisible] = useState(false);
     const location = useLocation();
 
     useEffect(() => {
@@ -27,15 +30,21 @@ export default function Header() {
     }, [location]);
 
     // ボタンクリックのハンドラ
-    const toggleDropdown = () => {
+    const toggleDropdown2 = () => {
         setIsDropdownVisible((prevState) => !prevState);
+    };
+
+    const toggleDropdown = () => {
+        setDropdownVisible(!dropdownVisible);
     };
 
     useEffect(() => {
         if (token) {
             axiosClient
-                .get("/announcement/list")
+                .get("/user/notification")
                 .then((response) => {
+                    setNotificationCount(response.data.length);
+                    setNotifications(response.data);
                     console.log(response.data);
                 })
                 .catch((err) => {
@@ -119,7 +128,7 @@ export default function Header() {
                                         data-dropdown-toggle="dropdown"
                                         className="flex items-center px-4 py-2.5 text-sm font-medium text-gray-900 bg-gray-100 border border-gray-300 rounded-l-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
                                         type="button"
-                                        onClick={toggleDropdown}
+                                        onClick={toggleDropdown2}
                                     >
                                         All Categories
                                         <svg
@@ -239,20 +248,50 @@ export default function Header() {
                                 </>
                             )}
                         </a>
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-6 h-6 mx-2"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
-                            />
-                        </svg>
+                        <div className="relative inline-block">
+                            <button
+                                onClick={toggleDropdown}
+                                className="focus:outline-none"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-6 h-6 mx-2"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+                                    />
+                                </svg>
+                            </button>
+                            {dropdownVisible && (
+                                <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded shadow-lg">
+                                    {notifications.length > 0 ? (
+                                        notifications.map((notification) => (
+                                            <div
+                                                key={notification.id}
+                                                className="p-4 border-b last:border-b-0"
+                                            >
+                                                {notification.body}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="p-4 text-gray-500">
+                                            No notifications
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            {notificationCount > 0 && (
+                                <span className="absolute top-[-10px] right-[-10px] bg-red-500 text-white rounded-full text-xs px-2 py-1">
+                                    {notificationCount}
+                                </span>
+                            )}
+                        </div>
                         <NavLink to={"/profile"}>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
