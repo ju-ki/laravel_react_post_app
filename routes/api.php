@@ -38,6 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts/{id}/upvote/', [UpvoteDownvoteController::class, 'store']);
     Route::get("/user/id", [AuthController::class, "fetchUserId"]);
     Route::get("/user/notification", [NotificationController::class, "show"]);
+    Route::patch("/user/notification/markAsRead", [NotificationController::class, "read"]);
     Route::get("/announcement/list", [AnnouncementController::class, "list"]);
     // Route::get("/{announcement}", [AnnouncementController::class, "show"])->name('announcement.show');;
 });

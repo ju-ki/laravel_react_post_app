@@ -6,22 +6,21 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Log;
 
-class NewCommentNotification extends Notification
+class NewUpvoteNotification extends Notification
 {
     use Queueable;
 
-    protected $comment;
+    protected $upvoted;
     protected $postUserId;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($comment, $postUserId)
+    public function __construct($upvoted, $postUserId)
     {
         //
-        $this->comment = $comment;
+        $this->upvoted = $upvoted;
         $this->postUserId = $postUserId;
     }
 
@@ -49,9 +48,9 @@ class NewCommentNotification extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            "title" => "新しいコメントが追加されました",
-            "body" => $this->comment->body,
-            "post_id" => $this->comment->post_id,
+            "title" => "あなたの投稿にいいねが押されました",
+            "body" => "",
+            "post_id" => $this->upvoted->post_id,
             "user_id" => $this->postUserId
         ];
     }

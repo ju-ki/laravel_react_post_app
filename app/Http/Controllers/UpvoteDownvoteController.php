@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use App\Models\UpvoteDownvote;
+use App\Notifications\NewUpvoteNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UpvoteDownvoteController extends Controller
 {
@@ -31,10 +34,17 @@ class UpvoteDownvoteController extends Controller
     public function store(Request $request, string $id)
     {
         $userId = Auth::user()->id;
-        UpvoteDownvote::updateOrCreate(
+        $upvotedValue = filter_var($request->is_upvoted, FILTER_VALIDATE_BOOLEAN);
+        Log::info($upvotedValue);
+        $upvoted = UpvoteDownvote::updateOrCreate(
             ['user_id' => $userId, 'post_id' => $id],
             ['is_upvoted' => filter_var($request->is_upvoted, FILTER_VALIDATE_BOOLEAN)]
         );
+        if ($upvotedValue) {
+            $post = Post::find($id);
+            $postUserId = $post->user_id;
+            $post->user->notify(new NewUpvoteNotification($upvoted, $postUserId));
+        }
         return $id;
     }
 

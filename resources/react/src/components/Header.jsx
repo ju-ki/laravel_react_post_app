@@ -27,6 +27,7 @@ export default function Header() {
 
     useEffect(() => {
         setIsDropdownVisible(false); // 画面遷移ごとにドロップボックスを閉じる
+        setDropdownVisible(false);
     }, [location]);
 
     // ボタンクリックのハンドラ
@@ -34,8 +35,23 @@ export default function Header() {
         setIsDropdownVisible((prevState) => !prevState);
     };
 
+    //通知欄のクリックハンドラ
     const toggleDropdown = () => {
         setDropdownVisible(!dropdownVisible);
+
+        if (dropdownVisible && notificationCount > 0) {
+            //既読にする
+            axiosClient
+                .patch("/user/notification/markAsRead")
+                .then((response) => {
+                    console.log(response);
+                    setNotificationCount(0);
+                    setNotifications([]);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
     };
 
     useEffect(() => {
@@ -43,7 +59,12 @@ export default function Header() {
             axiosClient
                 .get("/user/notification")
                 .then((response) => {
-                    setNotificationCount(response.data.length);
+                    console.log(response);
+                    setNotificationCount(
+                        response.data.filter(
+                            (notification) => notification.read_at === null
+                        ).length
+                    );
                     setNotifications(response.data);
                     console.log(response.data);
                 })
@@ -269,15 +290,58 @@ export default function Header() {
                                 </svg>
                             </button>
                             {dropdownVisible && (
-                                <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded shadow-lg">
+                                <div className="absolute right-0 mt-2 w-96 max-h-96 overflow-y-auto bg-white border border-gray-200 rounded shadow-lg">
                                     {notifications.length > 0 ? (
                                         notifications.map((notification) => (
-                                            <div
-                                                key={notification.id}
-                                                className="p-4 border-b last:border-b-0"
-                                            >
-                                                {notification.body}
-                                            </div>
+                                            <>
+                                                <NavLink
+                                                    to={`/post/${notification.post_id}`}
+                                                    className="block p-4 border-b w-96 last:border-b-0 hover:bg-gray-100"
+                                                >
+                                                    <div
+                                                        key={notification.id}
+                                                        className={
+                                                            "truncate" +
+                                                            (notification.read_at !=
+                                                            null
+                                                                ? " bg-slate-100"
+                                                                : "")
+                                                        }
+                                                    >
+                                                        <div className="flex justify-between items-center mb-2">
+                                                            <span className="font-semibold">
+                                                                {
+                                                                    notification.title
+                                                                }
+                                                            </span>
+                                                            <div className="text-gray-500 text-sm">
+                                                                by{" "}
+                                                                <span className="font-medium me-4">
+                                                                    {
+                                                                        notification
+                                                                            .user
+                                                                            .name
+                                                                    }
+                                                                </span>{" "}
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-gray-700">
+                                                            {notification.body
+                                                                .length > 20
+                                                                ? notification.body.substring(
+                                                                      0,
+                                                                      30
+                                                                  ) + "..."
+                                                                : notification.body}
+                                                        </div>
+                                                        <div className="text-gray-700">
+                                                            {
+                                                                notification.time_ago
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </NavLink>
+                                            </>
                                         ))
                                     ) : (
                                         <div className="p-4 text-gray-500">
