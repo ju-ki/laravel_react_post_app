@@ -189,7 +189,7 @@ export default function PostView() {
             .catch((err) => {
                 console.log(err);
             });
-    }, []);
+    }, [id]);
 
     const onClickEditButton = () => {
         navigate(`/post/edit/${id}`);
