@@ -28,24 +28,21 @@ export default function CreatePost() {
         axiosClient
             .post("/create", payload)
             .then((response) => {
-                console.log("bb");
                 if (response.status == 201) {
                     alert(response.data.message);
                     navigate("/");
                 }
-            })
-            .catch((err) => {
-                console.log(err);
-                if (err.response.status == 422) {
-                    console.log("aa");
-                    const errors = err.response.data.errors;
-                    console.log(errors);
+                if (response.response.status == 422) {
+                    const errors = response.response.data.errors;
                     const finalErrors = Object.values(errors).reduce(
                         (accum, next) => [...accum, ...next],
                         []
                     );
                     setErrors(finalErrors);
                 }
+            })
+            .catch((err) => {
+                console.log(err);
             });
     };
 

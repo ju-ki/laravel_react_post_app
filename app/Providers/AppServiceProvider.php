@@ -18,9 +18,9 @@ class AppServiceProvider extends ServiceProvider
             return new PostService();
         });
 
-        // $this->app->singleton(CategoryService::class, function ($app) {
-        //     return new CategoryService();
-        // });
+        $this->app->singleton(CategoryService::class, function ($app) {
+            return new CategoryService();
+        });
     }
 
     /**

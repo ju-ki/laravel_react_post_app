@@ -10,6 +10,8 @@ use App\Services\CategoryService;
 use App\Services\PostService;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\Log;
@@ -60,10 +62,11 @@ class PostController extends Controller
     {
         $data = $request->validated();
         $data["user_id"] = $request->user()->id;
-        // $data["image"] = $this->storeImage($request);
+        if ($data["image"]) {
+            $data["image"] = $this->storeImage($data);
+        }
 
         $post = Post::create($data);
-        Log::info($post);
         $post->save();
         $categoryIds = $this->categoryService->createCategory($data);
         $post->categories()->sync($categoryIds);
@@ -154,15 +157,6 @@ class PostController extends Controller
             $category_ids[] = $category->id;
         }
         return $category_ids;
-    }
-
-
-    public function storeImage($data)
-    {
-        $original = $data->file("image")->getClientOriginalName();
-        $name = date("Ymd_His") . '_' . $original;
-        $data->file("image")->move("storage/images", $name);
-        return $name;
     }
 
     public function getPosts(string $id)

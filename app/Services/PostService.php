@@ -43,4 +43,13 @@ class PostService
             ->get();
         return $popularPosts;
     }
+
+
+    public function storeImage($data)
+    {
+        $original = $data->file("image")->getClientOriginalName();
+        $name = date("Ymd_His") . '_' . $original;
+        $data->file("image")->move("storage/images", $name);
+        return $name;
+    }
 }
