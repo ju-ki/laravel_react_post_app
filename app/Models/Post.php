@@ -22,6 +22,16 @@ class Post extends Model
         );
     }
 
+    public function getDaysAgoAttribute()
+    {
+        return Carbon::parse($this->created_at)->diffForHumans();
+    }
+
+    public function getImagePathAttribute()
+    {
+        return asset("storage/images/" . $this->image);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -41,6 +51,5 @@ class Post extends Model
     public function upvoteDownvotes()
     {
         return $this->hasMany(UpvoteDownvote::class);
-        
     }
 }

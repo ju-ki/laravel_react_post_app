@@ -4,6 +4,7 @@ import PreviewImageComponent from "../components/PreviewImageComponent";
 import CategorySelector from "../components/CategorySelector";
 import axiosClient from "../axios";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function CreatePost() {
     const [title, setTitle] = useState("");
@@ -26,23 +27,31 @@ export default function CreatePost() {
 
         axiosClient
             .post("/create", payload)
-            .then((responses) => {
-                console.log(responses);
-                if (responses.response) {
-                    const finalErrors = Object.values(
-                        responses.response.data.errors
-                    ).reduce((accum, next) => [...accum, ...next], []);
-                    setErrors(finalErrors);
-                    console.log(errors);
-                } else {
+            .then((response) => {
+                console.log("bb");
+                if (response.status == 201) {
+                    alert(response.data.message);
                     navigate("/");
                 }
-                // console.log(responses);
             })
             .catch((err) => {
-                console.error(err);
+                console.log(err);
+                if (err.response.status == 422) {
+                    console.log("aa");
+                    const errors = err.response.data.errors;
+                    console.log(errors);
+                    const finalErrors = Object.values(errors).reduce(
+                        (accum, next) => [...accum, ...next],
+                        []
+                    );
+                    setErrors(finalErrors);
+                }
             });
     };
+
+    useEffect(() => {
+        console.log(errors);
+    }, [errors]);
 
     const handleImageChange = (e) => {
         setImage(e.imageData);

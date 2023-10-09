@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -26,5 +27,23 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $exception)
+    {
+        // if ($request->expectsJson()) {
+        //     \Log::error($exception->getMessage());
+
+        //     return response()->json([
+        //         "error" => "エラーが発生しました"
+        //     ], 500); // エラー時のステータスコード
+        // }
+
+        // return parent::render($request, $exception);
+        if ($exception instanceof HttpResponseException) {
+            return response()->json(['message' => 'バリデーションエラーが解決しました'], 422);
+        }
+
+        return parent::render($request, $exception);
     }
 }
