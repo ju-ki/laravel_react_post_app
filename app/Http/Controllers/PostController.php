@@ -62,14 +62,14 @@ class PostController extends Controller
     {
         $data = $request->validated();
         $data["user_id"] = $request->user()->id;
-        if ($data["image"]) {
-            $data["image"] = $this->storeImage($data);
+        if (isset($data["image"]) && !empty($data["image"])) {
+            $data["image"] = $this->postService->storeImage($data);
         }
 
         $post = Post::create($data);
         $post->save();
-        $categoryIds = $this->categoryService->createCategory($data);
-        $post->categories()->sync($categoryIds);
+        // $categoryIds = $this->categoryService->createCategory($data);
+        // $post->categories()->sync($categoryIds);
         return response()->json([
             "message" => "投稿に作成に成功しました"
         ], 201);
