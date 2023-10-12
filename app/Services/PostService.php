@@ -45,11 +45,11 @@ class PostService
     }
 
 
-    public function storeImage($data)
+    public function storeImage($image)
     {
-        $original = $data->file("image")->getClientOriginalName();
+        $original = $image->getClientOriginalName();
         $name = date("Ymd_His") . '_' . $original;
-        $data->file("image")->move("storage/images", $name);
+        $image->move("public/storage/images", $name);
         return $name;
     }
 }

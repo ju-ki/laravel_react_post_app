@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -62,14 +63,16 @@ class PostController extends Controller
     {
         $data = $request->validated();
         $data["user_id"] = $request->user()->id;
-        if (isset($data["image"]) && !empty($data["image"])) {
-            $data["image"] = $this->postService->storeImage($data);
+        if (isset($data["image"]) && $data["image"] instanceof UploadedFile) {
+            $data["image"] = $this->postService->storeImage($data["image"]);
         }
 
         $post = Post::create($data);
         $post->save();
-        // $categoryIds = $this->categoryService->createCategory($data);
-        // $post->categories()->sync($categoryIds);
+        if (isset($data["categories"]) && !empty($data["categories"])) {
+            $categoryIds = $this->categoryService->createCategory($data);
+            $post->categories()->sync($categoryIds);
+        }
         return response()->json([
             "message" => "投稿に作成に成功しました"
         ], 201);
