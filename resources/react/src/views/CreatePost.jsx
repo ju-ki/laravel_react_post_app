@@ -17,7 +17,7 @@ export default function CreatePost() {
     const onSubmit = (e) => {
         e.preventDefault();
         setErrors([]);
-        console.log(selectedCategories);
+        console.log(image);
         const payload = {
             title: title,
             body: body,
@@ -26,7 +26,11 @@ export default function CreatePost() {
         };
 
         axiosClient
-            .post("/create", payload)
+            .post("/create", payload, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            })
             .then((response) => {
                 if (response.status == 201) {
                     alert(response.data.message);
@@ -51,7 +55,8 @@ export default function CreatePost() {
     }, [errors]);
 
     const handleImageChange = (e) => {
-        setImage(e.imageData);
+        console.log(e);
+        setImage(e);
     };
 
     return (
@@ -68,7 +73,7 @@ export default function CreatePost() {
                         ))}
                     </div>
                 ) : (
-                    "aaaa"
+                    ""
                 )}
                 <form className="space-y-6" method="POST" onSubmit={onSubmit}>
                     <input type="hidden" name="remember" defaultValue="true" />

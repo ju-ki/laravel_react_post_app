@@ -63,7 +63,8 @@ class PostController extends Controller
     {
         $data = $request->validated();
         $data["user_id"] = $request->user()->id;
-        if (isset($data["image"]) && $data["image"] instanceof UploadedFile) {
+        Log::info($data);
+        if (isset($data["image"]) && $data["image"]) {
             $data["image"] = $this->postService->storeImage($data["image"]);
         }
 

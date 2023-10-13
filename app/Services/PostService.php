@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Post;
+use Illuminate\Support\Facades\Storage;
 
 class PostService
 {
@@ -49,7 +50,8 @@ class PostService
     {
         $original = $image->getClientOriginalName();
         $name = date("Ymd_His") . '_' . $original;
-        $image->move("public/storage/images", $name);
-        return $name;
+        $path = Storage::disk('public')->putFileAs('images', $image, $name);
+
+        return basename($path);
     }
 }

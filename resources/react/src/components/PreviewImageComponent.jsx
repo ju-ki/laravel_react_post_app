@@ -27,7 +27,7 @@ export default function PreviewImageComponent(props) {
             setImage(file);
         }
         if (typeof props.onImageChange === "function") {
-            props.onImageChange(e);
+            props.onImageChange(file);
         }
     };
 
