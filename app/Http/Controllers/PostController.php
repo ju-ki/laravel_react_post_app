@@ -63,7 +63,6 @@ class PostController extends Controller
     {
         $data = $request->validated();
         $data["user_id"] = $request->user()->id;
-        Log::info($data);
         if (isset($data["image"]) && $data["image"]) {
             $data["image"] = $this->postService->storeImage($data["image"]);
         }
@@ -86,27 +85,25 @@ class PostController extends Controller
     {
         $post = Post::with("categories")->where("id", $id)->first();
         $post->day_ago = Carbon::parse($post->created_at)->diffForHumans();
-        // $post->image_path = asset("storage/images/" . $post->image);
+        $post->image_path = $post->imagePath;
         return $post;
     }
 
 
-    public function searchResultByKeyword(string $word = null)
+    public function searchByKeyword(string $word = null)
     {
-        if (!$word) {
-            return Post::all();
-        }
-        //キーワードによる部分一致検索
-        $matchedPosts = Post::where("title", "like", "%" . $word . "%")->paginate(5);
-        return $matchedPosts;
+        $matchedPosts = $this->postService->searchByKeyword($word);
+        return response()->json([
+            "matchedPosts" => $matchedPosts
+        ], 200);
     }
 
-    public function searchResultByCategory(string $cat)
+    public function searchByCategory(string $cat)
     {
-        $matchedPosts = Post::whereHas("categories", function ($query) use ($cat) {
-            $query->select("name")->where("name", $cat);
-        })->paginate(5);
-        return $matchedPosts;
+        $matchedPosts = $this->postService->searchByCategory($cat);
+        return response()->json([
+            "matchedPosts" => $matchedPosts
+        ], 200);
     }
 
 
@@ -129,19 +126,27 @@ class PostController extends Controller
     public function update(PostRequest $request, string $id)
     {
         //TODO:update
-        $data = $request->validated();
         $post = Post::find($id);
-        $post->update([
-            "title" => $data["title"],
-            "body" => $data["body"],
-            "image" => $this->storeImage($request)
-        ]);
-        // 各カテゴリを保存し、postとリンクします
-        $category_ids = $this->createCategory($data);
 
-        // PostとCategoryの間のリレーションシップを保存
-        $post->categories()->sync($category_ids);
-        return "success";
+        if (!$post) {
+            return response()->json([
+                "message" => "Post not Found"
+            ], 404);
+        }
+        $data = $request->validated();
+
+        if (isset($data["image"]) && data["image"]) {
+            $data["image"] = $this->postService->storeImage($data["image"]);
+        }
+
+        $post->update($data);
+
+        if (isset($data["categories"]) && !empty($data["categories"])) {
+            $category_ids = $this->categoryService->createCategory($data);
+            $post->categories()->sync($category_ids);
+        }
+
+        return response()->json(["message" => "記事の更新に成功しました"], 201);
     }
 
     /**
@@ -150,17 +155,6 @@ class PostController extends Controller
     public function destroy(string $id)
     {
         //
-    }
-
-    public function createCategory($data)
-    {
-        $category_ids = [];
-        foreach ($data["categories"] as $categoryData) {
-            // Categoryモデルにデータを保存
-            $category = Category::firstOrCreate(['name' => $categoryData['value']]);
-            $category_ids[] = $category->id;
-        }
-        return $category_ids;
     }
 
     public function getPosts(string $id)

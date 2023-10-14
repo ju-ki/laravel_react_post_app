@@ -53,6 +53,6 @@ Route::get("/comment/{id}", [CommentController::class, "show"]);
 Route::get("/category", [CategoryController::class, "fetchCategory"]);
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::post("/search/word/{word}", [PostController::class, "searchResultByKeyword"]);
+Route::post("/search/word/{word}", [PostController::class, "searchByKeyword"]);
 Route::get("/search/all", [PostController::class, "searchAllResults"]);
-Route::post("/search/category/{cat}", [PostController::class, "searchResultByCategory"]);
+Route::post("/search/category/{cat}", [PostController::class, "searchByCategory"]);

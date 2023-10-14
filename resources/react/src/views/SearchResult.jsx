@@ -19,7 +19,7 @@ export default function SearchResult() {
                 .post(`/search/word/${query}?page=${page}`)
                 .then((response) => {
                     console.log(response.data);
-                    setMatchedPosts(response.data);
+                    setMatchedPosts(response.data.matchedPosts);
                 })
                 .catch((err) => {
                     console.log(err);
@@ -29,7 +29,7 @@ export default function SearchResult() {
                 .post(`/search/category/${cat}?page=${page}`)
                 .then((response) => {
                     console.log(response.data);
-                    setMatchedPosts(response.data);
+                    setMatchedPosts(response.data.matchedPosts);
                 })
                 .catch((err) => {
                     console.log(err);

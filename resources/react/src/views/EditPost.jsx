@@ -15,21 +15,24 @@ export default function EditPost() {
     const [body, setBody] = useState("");
     const [loading, setLoading] = useState(true);
     const [categories, setCategories] = useState([]);
+    const [errors, setErrors] = useState([]);
 
     useEffect(() => {
         axiosClient
             .get(`/post/${id}`)
             .then((response) => {
+                console.log(response);
                 setTitle(response.data.title);
                 setBody(response.data.body);
-                setImage(response.data.image);
-                setImageUrl(response.data.image_path);
+                // setImage(response.data.image);
+                // setImageUrl(response.data.image_path);
                 const categories = response.data["categories"].map(
                     (element) => ({
                         value: element["name"],
                         label: element["name"],
                     })
                 );
+                console.log(categories);
                 setCategories(categories);
             })
             .catch((err) => {
@@ -40,11 +43,12 @@ export default function EditPost() {
             });
     }, []);
 
-    const handleImageChange = (e) => {
-        e.preventDefault();
-        console.log(e.target.files[0]);
-        setImage(e.target.files[0]);
-    };
+    // const handleImageChange = (e) => {
+    //     e.preventDefault();
+    //     console.log(e.target.files[0]);
+    //     setImage(e.target.files[0]);
+    // };
+
     const onSubmit = (event) => {
         event.preventDefault();
         const payload = {
@@ -53,7 +57,6 @@ export default function EditPost() {
             image: image,
             categories: categories,
         };
-        console.log(payload);
         axiosClient
             .post(`/post/edit/${id}`, payload, {
                 headers: {
@@ -62,7 +65,18 @@ export default function EditPost() {
             })
             .then((response) => {
                 console.log(response);
-                navigate(`/post/${id}`);
+                if (response.status == 201) {
+                    alert(response.data.message);
+                    navigate(`/post/${id}`);
+                }
+                if (response.response.status == 422) {
+                    const errors = response.response.data.errors;
+                    const finalErrors = Object.values(errors).reduce(
+                        (accum, next) => [...accum, ...next],
+                        []
+                    );
+                    setErrors(finalErrors);
+                }
             })
             .catch((err) => {
                 console.log(err);
@@ -77,6 +91,17 @@ export default function EditPost() {
         <>
             <Header />
             <div className="mt-24 xl:mx-auto xl:w-full xl:max-w-xl mx-3 ">
+                {errors.length ? (
+                    <div className="bg-red-500 my-10 rounded py-2 px-3 text-white">
+                        {errors.map((_error) => (
+                            <li key={_error} className="list-none">
+                                {_error}
+                            </li>
+                        ))}
+                    </div>
+                ) : (
+                    ""
+                )}
                 <button
                     className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
                     onClick={onClickReturnButton}
@@ -120,13 +145,13 @@ export default function EditPost() {
                             ></textarea>
                         </div>
                     </div>
-                    <div>
+                    {/* <div>
                         <PreviewImageComponent
                             onImageChange={(e) => handleImageChange(e)}
                             setImage={image}
                             initialPreviewUrl={imageUrl}
                         />
-                    </div>
+                    </div> */}
                     <div>
                         <CategorySelector
                             setSelectedCategories={setCategories}

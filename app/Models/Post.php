@@ -31,6 +31,7 @@ class Post extends Model
     {
         return asset("storage/images/" . $this->image);
     }
+    
 
     public function user()
     {

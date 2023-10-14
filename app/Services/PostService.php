@@ -45,7 +45,12 @@ class PostService
         return $popularPosts;
     }
 
-
+    /**
+     * 画像を保存する
+     *
+     * @param 画像データ
+     * @return 画像のパス
+     */
     public function storeImage($image)
     {
         $original = $image->getClientOriginalName();
@@ -53,5 +58,32 @@ class PostService
         $path = Storage::disk('public')->putFileAs('images', $image, $name);
 
         return basename($path);
+    }
+
+    /**
+     * キーワードを元に投稿を取得
+     *
+     * @param string|null $word 検索キーワード
+     * @return void
+     */
+    public function searchByKeyword(string $word = null)
+    {
+        if (!$word) {
+            return Post::paginate(5);
+        }
+
+        $matchedPosts = Post::where("title", "like", "%" . $word . "%")
+            ->orderBy("created_at", "desc")
+            ->paginate(5);
+        return $matchedPosts;
+    }
+
+
+    public function searchByCategory(string $cat)
+    {
+        $matchedPosts = Post::whereHas("categories", function ($query) use ($cat) {
+            $query->select("name")->where("name", $cat);
+        })->paginate(5);
+        return $matchedPosts;
     }
 }
