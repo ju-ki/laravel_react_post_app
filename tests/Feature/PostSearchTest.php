@@ -9,11 +9,11 @@ use Tests\TestCase;
 class PostSearchTest extends TestCase
 {
     /**
-     * A basic feature test example.
+     * キーワード検索のテスト
      */
     public function test_search_by_keyword()
     {
-        $response = $this->post("/api/search/word/test");
+        $response = $this->get("/api/search/word/test");
         $response->assertStatus(200);
         //ページごとのテスト
         $response->assertJsonCount(5, "matchedPosts.data");
@@ -25,6 +25,78 @@ class PostSearchTest extends TestCase
         ]);
     }
 
+    /**
+     * カテゴリの検索テスト
+     *
+     * @return void
+     */
+    public function test_search_by_category()
+    {
+        $response = $this->get("/api/search/category/minus");
+        $response->assertStatus(200);
 
-    public function
+        $response->assertJsonCount(2, "matchedPosts.data");
+        $response->assertJson([
+            "matchedPosts" => [
+                "total" => 2
+            ]
+        ]);
+    }
+
+
+    /**
+     * サポートしていないメソッドでのテスト
+     *
+     * @return void
+     */
+    public function test_by_keyword_with_invalid_method()
+    {
+        $response = $this->post("/api/search/word/test");
+        $response->assertStatus(405);
+    }
+
+    /**
+     * サポートしていないメソッドでのテスト
+     *
+     * @return void
+     */
+    public function test_by_category_with_invalid_method()
+    {
+        $response = $this->post("/api/search/category/test");
+        $response->assertStatus(405);
+    }
+
+    /**
+     * 検索結果が0のテスト
+     *
+     * @return void
+     */
+    public function test_search_by_nonexistent_word()
+    {
+        $response = $this->get("/api/search/word/searchWord!!");
+        $response->assertStatus(200);;
+        $response->assertJsonCount(0, "matchedPosts.data");
+        $response->assertJson([
+            "matchedPosts" => [
+                "total" => 0
+            ]
+        ]);
+    }
+
+    /**
+     * 検索結果が0のテスト
+     *
+     * @return void
+     */
+    public function test_search_by_nonexistent_category()
+    {
+        $response = $this->get("/api/search/category/searchWord!!");
+        $response->assertStatus(200);;
+        $response->assertJsonCount(0, "matchedPosts.data");
+        $response->assertJson([
+            "matchedPosts" => [
+                "total" => 0
+            ]
+        ]);
+    }
 }

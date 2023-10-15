@@ -16,7 +16,7 @@ export default function SearchResult() {
     useEffect(() => {
         if (query != null) {
             axiosClient
-                .post(`/search/word/${query}?page=${page}`)
+                .get(`/search/word/${query}?page=${page}`)
                 .then((response) => {
                     console.log(response.data);
                     setMatchedPosts(response.data.matchedPosts);
@@ -26,7 +26,7 @@ export default function SearchResult() {
                 });
         } else if (cat != null) {
             axiosClient
-                .post(`/search/category/${cat}?page=${page}`)
+                .get(`/search/category/${cat}?page=${page}`)
                 .then((response) => {
                     console.log(response.data);
                     setMatchedPosts(response.data.matchedPosts);

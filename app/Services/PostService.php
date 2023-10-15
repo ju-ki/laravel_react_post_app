@@ -86,4 +86,11 @@ class PostService
         })->paginate(5);
         return $matchedPosts;
     }
+
+    public function getPostDetailsWithCategory(string $id)
+    {
+        $post = Post::with("categories")->where("id", $id)->get();
+        $post->day_ago = Carbon::parse($post->created_at)->diffForHumans();
+        return $post;
+    }
 }
