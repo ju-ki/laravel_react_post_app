@@ -45,7 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get("/home", [PostController::class, "home"]); //Top画面のAPI
 Route::get('/posts/{id}/upvote/count', [UpvoteDownvoteController::class, 'show']);
-Route::get('/post/{id}/detail', [PostDetailController::class, "getPostDetail"]);
+Route::get('/post/{id}/detail', [PostDetailController::class, "show"]);
 Route::get("/views/{id}", [PostViewController::class, "addView"])->middleware('auth:sanctum', 'optional');
 Route::get("/views/counter/{id}", [PostViewController::class, "getViewCount"]);
 Route::get("/post/{id}", [PostController::class, "show"]);

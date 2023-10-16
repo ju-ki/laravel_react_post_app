@@ -177,12 +177,11 @@ export default function PostView() {
         axiosClient
             .get(`/post/${id}/detail`)
             .then((response) => {
-                console.log(response);
                 setPostDetail({
                     isUpvoted: response.data.isUpVoted,
-                    post: response.data.post,
-                    viewCounter: response.data.viewCount,
-                    upvotedCount: response.data.upvoteCount,
+                    post: response.data.postDetails[0],
+                    viewCounter: response.data.viewCounter,
+                    upvotedCount: response.data.upVoteCount,
                 });
                 response.data.isUpVoted && setIsUpVoted(true);
             })

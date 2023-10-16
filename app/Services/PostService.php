@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Post;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
 class PostService
@@ -90,7 +91,7 @@ class PostService
     public function getPostDetailsWithCategory(string $id)
     {
         $post = Post::with("categories")->where("id", $id)->get();
-        $post->day_ago = Carbon::parse($post->created_at)->diffForHumans();
+        // $post->day_ago = $post->daysAgo;
         return $post;
     }
 }

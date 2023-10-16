@@ -6,6 +6,7 @@ use App\Services\CategoryService;
 use App\Services\PostDetailService;
 use App\Services\PostService;
 use App\Services\PostViewService;
+use App\Services\UpVoteDownVoteService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,7 +30,10 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(PostDetailService::class, function ($app) {
-            return new PostDetailService();
+            $upvoteDownService = $app->make(UpVoteDownVoteService::class);
+            $postService = $app->make(PostService::class);
+            $postViewService = $app->make(PostViewService::class);
+            return new PostDetailService($upvoteDownService, $postService, $postViewService);
         });
     }
 

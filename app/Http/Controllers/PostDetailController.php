@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostViewRequest;
 use App\Models\Post;
 use App\Models\UpvoteDownvote;
+use App\Services\PostDetailService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,21 +14,16 @@ use Illuminate\Support\Facades\Log;
 
 class PostDetailController extends Controller
 {
-    //
-    public function getPostDetail(string $id)
+    protected $postDetailsService;
+
+    public function __construct(PostDetailService $postDetailService)
     {
-        // $userId = Auth::user()->id;
-        $userId = 1;
-        $post = Post::with("categories")->where("id", $id)->first();
-        $post->day_ago = Carbon::parse($post->created_at)->diffForHumans();
-        $viewCount = DB::table("post_views")->where("post_id", $id)->count();
-        $upvoteCount = UpvoteDownvote::where("post_id", $id)->where("is_upvoted", 1)->count();
-        $isUpVoted = UpvoteDownvote::where("post_id", $id)->where("user_id", $userId)->value("is_upvoted");
-        return response()->json([
-            "post" => $post,
-            "viewCount" => $viewCount,
-            "upvoteCount" => $upvoteCount,
-            "isUpVoted" => $isUpVoted
-        ]);
+        $this->postDetailsService = $postDetailService;
+    }
+    //
+    public function show(string $id, PostViewRequest $request)
+    {
+        return $this->postDetailsService->getPostDetails($id, $request);
     }
 }
+    
