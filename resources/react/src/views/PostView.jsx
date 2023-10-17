@@ -284,15 +284,17 @@ export default function PostView() {
                     handleEditCommentId={handleEditCommentId}
                     comments={comments}
                 />
-                <CommentForm
-                    comment={formComment}
-                    setComment={setFormComment}
-                    commentId={commentId}
-                    isEditing={editingCommentId !== null}
-                    toggleEditing={toggleEditing}
-                    fetchComments={fetchComments}
-                    handleEditCommentId={handleEditCommentId}
-                ></CommentForm>
+                {token && (
+                    <CommentForm
+                        comment={formComment}
+                        setComment={setFormComment}
+                        commentId={commentId}
+                        isEditing={editingCommentId !== null}
+                        toggleEditing={toggleEditing}
+                        fetchComments={fetchComments}
+                        handleEditCommentId={handleEditCommentId}
+                    ></CommentForm>
+                )}
             </div>
         </>
     );

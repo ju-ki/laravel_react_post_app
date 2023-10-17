@@ -56,3 +56,4 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get("/search/word/{word}", [PostController::class, "searchByKeyword"]);
 Route::get("/search/all", [PostController::class, "searchAllResults"]);
 Route::get("/search/category/{cat}", [PostController::class, "searchByCategory"]);
+Route::post("/password_forgot", [AuthController::class, "passwordForgot"]);

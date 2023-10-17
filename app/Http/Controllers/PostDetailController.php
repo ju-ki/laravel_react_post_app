@@ -26,4 +26,3 @@ class PostDetailController extends Controller
         return $this->postDetailsService->getPostDetails($id, $request);
     }
 }
-    

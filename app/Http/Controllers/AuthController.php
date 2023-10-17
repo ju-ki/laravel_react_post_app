@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
@@ -67,6 +68,15 @@ class AuthController extends Controller
                 'success' => false
             ]);
         }
+    }
+
+
+    public function passwordForgot(Request $request)
+    {
+        // $data = $request->validated();
+        $status = Password::sendResetLink($request->only("email"));
+
+        return trans($status);
     }
 
     public function profile(Request $request)

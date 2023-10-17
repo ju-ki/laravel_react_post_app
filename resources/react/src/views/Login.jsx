@@ -5,20 +5,6 @@ import { NavLink } from "react-router-dom";
 import { useAuthStateContext } from "../context/AuthContext";
 import axiosClient from "../axios";
 
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
 export default function Login() {
     const { setToken } = useAuthStateContext();
     const [email, setEmail] = useState("");
@@ -67,7 +53,9 @@ export default function Login() {
                     {errors.length ? (
                         <div className="bg-red-500 rounded py-2 px-3 text-white">
                             {errors.map((_error) => (
-                                <li className="list-none">{_error}</li>
+                                <li key="" className="list-none">
+                                    {_error}
+                                </li>
                             ))}
                         </div>
                     ) : (
@@ -118,12 +106,12 @@ export default function Login() {
                                     Password
                                 </label>
                                 <div className="text-sm">
-                                    <a
-                                        href="#"
+                                    <NavLink
+                                        to={"/forgot_password"}
                                         className="font-semibold text-indigo-600 hover:text-indigo-500"
                                     >
                                         Forgot password?
-                                    </a>
+                                    </NavLink>
                                 </div>
                             </div>
                             <div className="mt-2">

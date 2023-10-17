@@ -7,6 +7,7 @@ import CreatePost from "./views/CreatePost";
 import PostView from "./views/PostView";
 import EditPost from "./views/EditPost";
 import SearchResult from "./views/SearchResult";
+import ForgotPassword from "./views/ForgotPassword";
 
 const router = createBrowserRouter([
     {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
     {
         path: "login/",
         element: <Login />,
+    },
+    {
+        path: "forgot_password/",
+        element: <ForgotPassword />,
     },
     {
         path: "profile/",
