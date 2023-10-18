@@ -70,10 +70,17 @@ class AuthController extends Controller
         }
     }
 
-
+    /**
+     * パスワードのリセットのリンクを送るコード
+     *
+     * @param Request $request
+     * @return void
+     */
     public function passwordForgot(Request $request)
     {
-        // $data = $request->validated();
+        $request->validate([
+            "email" => "required|email|exists:users,email",
+        ]);
         $status = Password::sendResetLink($request->only("email"));
 
         return trans($status);

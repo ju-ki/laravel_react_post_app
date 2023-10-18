@@ -30,6 +30,7 @@ export default function ForgotPassword() {
                     action="#"
                     method="POST"
                     onSubmit={onSubmit}
+                    noValidate
                 >
                     <div>
                         <label
