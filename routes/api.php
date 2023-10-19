@@ -11,6 +11,7 @@ use App\Http\Controllers\PostViewController;
 use App\Http\Controllers\UpvoteDownvoteController;
 use App\Http\Controllers\UserProfileController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -57,3 +58,4 @@ Route::get("/search/word/{word}", [PostController::class, "searchByKeyword"]);
 Route::get("/search/all", [PostController::class, "searchAllResults"]);
 Route::get("/search/category/{cat}", [PostController::class, "searchByCategory"]);
 Route::post("/password_forgot", [AuthController::class, "passwordForgot"]);
+Route::post("/reset_password", [AuthController::class, "updatePassword"]);

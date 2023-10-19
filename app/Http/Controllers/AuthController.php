@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SignupRequest;
+use App\Models\PasswordResetToken;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\Rules\Password as RulesPassword;
 
 class AuthController extends Controller
 {
@@ -79,12 +83,64 @@ class AuthController extends Controller
     public function passwordForgot(Request $request)
     {
         $request->validate([
-            "email" => "required|email|exists:users,email",
+            "email" => "required|email",
         ]);
-        $status = Password::sendResetLink($request->only("email"));
+        Log::info($request);
+        $user = User::where("email", $request['email'])->first();
+        Log::info($user);
+        if (empty($user)) {
+            return response()->json([
+                "message" => "Not exists"
+            ], 422);
+        }
+        $token = Password::broker()->createToken($user);
+        $now = Carbon::now();
 
-        return trans($status);
+        $expire_at = $now->addHour(1)->toDateTimeString();
+        PasswordResetToken::created([
+            "email" => $request["email"],
+            "token" => $token
+        ]);
+
+        $user->sendPasswordResetNotification($token);
+
+        return response()->json([
+            "message" => "Exist"
+        ], 200);
     }
+
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => ['required', 'confirmed', RulesPassword::min(8)],
+        ]);
+
+        $user = User::where('email', $request['email'])->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'ユーザーが存在しません'], 404);
+        }
+
+        // Laravelの組み込みのパスワードリセット機能を使用してトークンを確認
+        $status = Password::reset(
+            $request->only('email', 'password', 'passwordConfirmation', 'token'),
+            function ($user, $password) use ($request) {
+                $user->forceFill([
+                    'password' => bcrypt($password)
+                ])->save();
+            }
+        );
+
+        if ($status == Password::PASSWORD_RESET) {
+            return response()->json(['message' => 'パスワードの更新に成功しました']);
+        } else {
+            return response()->json(['message' => trans($status)], 500);
+        }
+    }
+
 
     public function profile(Request $request)
     {

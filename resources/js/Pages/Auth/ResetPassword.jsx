@@ -68,7 +68,6 @@ export default function ResetPassword({ token, email }) {
                         htmlFor="password_confirmation"
                         value="Confirm Password"
                     />
-
                     <TextInput
                         type="password"
                         name="password_confirmation"
@@ -79,7 +78,6 @@ export default function ResetPassword({ token, email }) {
                             setData("password_confirmation", e.target.value)
                         }
                     />
-
                     <InputError
                         message={errors.password_confirmation}
                         className="mt-2"
