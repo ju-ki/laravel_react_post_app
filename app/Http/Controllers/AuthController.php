@@ -126,13 +126,15 @@ class AuthController extends Controller
 
         // Laravelの組み込みのパスワードリセット機能を使用してトークンを確認
         $status = Password::reset(
-            $request->only('email', 'password', 'passwordConfirmation', 'token'),
+            $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) use ($request) {
                 $user->forceFill([
                     'password' => bcrypt($password)
                 ])->save();
             }
         );
+
+        session(['has_reset_password' => true]);
 
         if ($status == Password::PASSWORD_RESET) {
             return response()->json(['message' => 'パスワードの更新に成功しました']);

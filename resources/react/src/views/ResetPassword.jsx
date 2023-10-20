@@ -1,8 +1,9 @@
 import { useState } from "react";
 import axiosClient from "../axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function ResetPassword() {
+    const navigate = useNavigate();
     const [password, setPassword] = useState("");
     const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
@@ -17,7 +18,7 @@ export default function ResetPassword() {
         event.preventDefault();
         const payload = {
             password: password,
-            passwordConfirmation: passwordConfirmation,
+            password_confirmation: passwordConfirmation,
             email: email,
             token: token,
         };
@@ -27,6 +28,7 @@ export default function ResetPassword() {
             .post("/reset_password", payload)
             .then((response) => {
                 console.log(response);
+                navigate("/login");
             })
             .catch((err) => {
                 console.log(err);
