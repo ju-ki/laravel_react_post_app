@@ -6,6 +6,7 @@ export default function ResetPassword() {
     const navigate = useNavigate();
     const [password, setPassword] = useState("");
     const [passwordConfirmation, setPasswordConfirmation] = useState("");
+    const [error, setError] = useState("");
 
     function useQuery() {
         return new URLSearchParams(useLocation().search);
@@ -22,13 +23,21 @@ export default function ResetPassword() {
             email: email,
             token: token,
         };
-        console.log(payload);
-
+        setError("");
         axiosClient
             .post("/reset_password", payload)
             .then((response) => {
-                console.log(response);
-                navigate("/login");
+                if (response.status == 200) {
+                    alert("パスワードの更新が完了しました");
+                    navigate("/login");
+                }
+
+                if (
+                    response.response.status == 422 ||
+                    response.response.status == 500
+                ) {
+                    setError(response.response.data.message);
+                }
             })
             .catch((err) => {
                 console.log(err);
@@ -48,6 +57,9 @@ export default function ResetPassword() {
                     noValidate
                 >
                     <div>
+                        {error != "" && (
+                            <div className="my-5 text-red-600">{error}</div>
+                        )}
                         <label
                             htmlFor="password"
                             className="block text-sm font-medium leading-6 text-gray-900"

@@ -9,14 +9,6 @@ use App\Models\User;
 use App\Services\CategoryService;
 use App\Services\PostService;
 use Carbon\Carbon;
-use Exception;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Log\Logger;
-use Illuminate\Support\Facades\Log;
-use Throwable;
 
 class PostController extends Controller
 {

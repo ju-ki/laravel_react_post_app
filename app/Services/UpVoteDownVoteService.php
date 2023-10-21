@@ -21,6 +21,7 @@ class UpVoteDownVoteService
             return 0;
         }
         $userId = Auth::user()->id;
+        //ここおかしいかも
         $isUpVoted = UpvoteDownvote::where("post_id", $id)->where("user_id", $userId)->value("is_upvoted");
         return $isUpVoted;
     }

@@ -4,15 +4,22 @@ import axiosClient from "../axios";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
+    const [error, setError] = useState("");
     const onSubmit = (event) => {
         event.preventDefault();
-        console.log(email);
+        setError("");
         axiosClient
             .post("/password_forgot", {
                 email: email,
             })
             .then((response) => {
-                console.log(response);
+                if (response.status == 200) {
+                    alert("メールを送信しました。");
+                    return;
+                }
+                if (response.response.status == 422) {
+                    setError(response.response.data.message);
+                }
             })
             .catch((err) => {
                 console.error(err);
@@ -21,7 +28,7 @@ export default function ForgotPassword() {
     return (
         <>
             <Header />
-            <div className="mt-10 text-center text-bold text-lg">
+            <div className="mt-10 text-center text-semibold text-lg">
                 パスワードアシスタント
             </div>
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -33,6 +40,9 @@ export default function ForgotPassword() {
                     noValidate
                 >
                     <div>
+                        {error != "" && (
+                            <div className="my-5 text-red-600">{error}</div>
+                        )}
                         <label
                             htmlFor="email"
                             className="block text-sm font-medium leading-6 text-gray-900"

@@ -17,7 +17,12 @@ use Illuminate\Validation\Rules\Password as RulesPassword;
 
 class AuthController extends Controller
 {
-    //
+    /**
+     * 新規会員登録
+     *
+     * @param SignupRequest $request
+     * @return void
+     */
     public function signup(SignupRequest $request)
     {
         $data = $request->validated();
@@ -36,6 +41,12 @@ class AuthController extends Controller
     }
 
 
+    /**
+     * ログイン
+     *
+     * @param LoginRequest $request
+     * @return void
+     */
     public function login(LoginRequest $request)
     {
         $credentials = $request->validated();
@@ -49,7 +60,7 @@ class AuthController extends Controller
             ], 422);
         }
 
-        $user = Auth::user();
+        $user = $this->profile();;
 
         $token = $user->createToken("main")->plainTextToken;
         return response([
@@ -59,6 +70,12 @@ class AuthController extends Controller
     }
 
 
+    /**
+     * ログアウト
+     *
+     * @param Request $request
+     * @return void
+     */
     public function logout(Request $request)
     {
         $user = $request->user();
@@ -85,18 +102,14 @@ class AuthController extends Controller
         $request->validate([
             "email" => "required|email",
         ]);
-        Log::info($request);
         $user = User::where("email", $request['email'])->first();
-        Log::info($user);
         if (empty($user)) {
             return response()->json([
-                "message" => "Not exists"
+                "message" => "This email is invalid"
             ], 422);
         }
         $token = Password::broker()->createToken($user);
-        $now = Carbon::now();
 
-        $expire_at = $now->addHour(1)->toDateTimeString();
         PasswordResetToken::created([
             "email" => $request["email"],
             "token" => $token
@@ -110,6 +123,12 @@ class AuthController extends Controller
     }
 
 
+    /**
+     * パスワードの更新
+     *
+     * @param Request $request
+     * @return void
+     */
     public function updatePassword(Request $request)
     {
         $request->validate([
@@ -137,19 +156,26 @@ class AuthController extends Controller
         session(['has_reset_password' => true]);
 
         if ($status == Password::PASSWORD_RESET) {
-            return response()->json(['message' => 'パスワードの更新に成功しました']);
+            return response()->json(['message' => 'パスワードの更新に成功しました'], 200);
         } else {
             return response()->json(['message' => trans($status)], 500);
         }
     }
 
-
-    public function profile(Request $request)
+    /**
+     * ログイン情報
+     *
+     */
+    public function profile()
     {
         return Auth::user();
     }
 
 
+    /**
+     * ログインしているユーザーIDを取得wosyutoku
+     *
+     */
     public function fetchUserId()
     {
         return Auth::user()->id;
