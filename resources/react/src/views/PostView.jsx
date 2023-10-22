@@ -36,8 +36,9 @@ export default function PostView() {
 
     // 関数の変更
     const handleEditCommentId = (commentId) => {
-        if (editingCommentId === commentId) {
+        if (commentId == null) {
             setEditingCommentId(null);
+            setFormComment("");
         } else {
             setEditingCommentId(commentId);
         }
@@ -54,17 +55,15 @@ export default function PostView() {
     // });
 
     const fetchComments = () => {
-        if (token) {
-            axiosClient
-                .get(`/comment/${id}`)
-                .then((response) => {
-                    console.log(response.data);
-                    setComments(response.data);
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        }
+        axiosClient
+            .get(`/comment/${id}`)
+            .then((response) => {
+                console.log(response.data);
+                setComments(response.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
     useEffect(() => {
         fetchComments();
@@ -174,17 +173,29 @@ export default function PostView() {
     }, []);
 
     useEffect(() => {
+        if (token) {
+            axiosClient
+                .get(`/upvotes/check/${id}`)
+                .then((response) => {
+                    console.log(response);
+                    response.data.isUpVoted && setIsUpVoted(true);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+    }, []);
+
+    useEffect(() => {
         axiosClient
             .get(`/post/${id}/detail`)
             .then((response) => {
                 console.log(response);
                 setPostDetail({
-                    isUpvoted: response.data.isUpVoted,
                     post: response.data.postDetails[0],
                     viewCounter: response.data.viewCounter,
-                    upvotedCount: response.data.upVoteCount,
+                    upvotedCount: response.data.upVotedCount,
                 });
-                response.data.isUpVoted && setIsUpVoted(true);
             })
             .catch((err) => {
                 console.log(err);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\UpvoteDownvote;
 use App\Notifications\NewUpvoteNotification;
+use App\Services\UpVoteDownVoteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +13,13 @@ use Illuminate\Support\Facades\Log;
 
 class UpvoteDownvoteController extends Controller
 {
+
+    protected $upvoteDownVoteService;
+
+    public function __construct(UpVoteDownVoteService $upVoteDownVoteService)
+    {
+        $this->upvoteDownVoteService = $upVoteDownVoteService;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -46,6 +54,14 @@ class UpvoteDownvoteController extends Controller
             $post->user->notify(new NewUpvoteNotification($upvoted, $postUserId));
         }
         return $id;
+    }
+
+    public function getIsUpVoted(string $id)
+    {
+        $isUpVoted = $this->upvoteDownVoteService->getIsUpVoted($id);
+        return response()->json([
+            "isUpVoted" => $isUpVoted,
+        ], 200);
     }
 
     /**

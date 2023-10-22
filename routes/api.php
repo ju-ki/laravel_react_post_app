@@ -41,14 +41,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get("/user/notification", [NotificationController::class, "show"]);
     Route::patch("/user/notification/markAsRead", [NotificationController::class, "read"]);
     Route::get("/announcement/list", [AnnouncementController::class, "list"]);
+    Route::get("/upvotes/check/{id}", [UpvoteDownvoteController::class, "getIsUpVoted"]);
 });
 
 
-Route::get("/home", [PostController::class, "home"]); //Top画面のAPI
-Route::get('/posts/{id}/upvote/count', [UpvoteDownvoteController::class, 'show']);
 Route::get('/post/{id}/detail', [PostDetailController::class, "show"]);
-Route::get("/views/{id}", [PostViewController::class, "addView"])->middleware('auth:sanctum', 'optional');
+Route::get("/home", [PostController::class, "home"]); //Top画面のAPI
 Route::get("/views/counter/{id}", [PostViewController::class, "getViewCount"]);
+Route::get('/posts/{id}/upvote/count', [UpvoteDownvoteController::class, 'show']);
+Route::get("/views/{id}", [PostViewController::class, "addView"])->middleware('auth:sanctum', 'optional');
 Route::get("/post/{id}", [PostController::class, "show"]);
 Route::get("/comment/{id}", [CommentController::class, "show"]);
 Route::get("/category", [CategoryController::class, "fetchCategory"]);

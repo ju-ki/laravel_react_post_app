@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Requests\PostViewRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class PostDetailService
 {
@@ -23,21 +24,23 @@ class PostDetailService
 
     public function getPostDetails(string $id, PostViewRequest $request)
     {
-        $isUpVoted = 0;
-        if (Auth::user()) {
-            $userId = Auth::user()->id;
-            $isUpVoted = $this->upvoteDownService->getIsUpVoted($id, $userId);
-        }
-
         $upVoteCount = $this->upvoteDownService->getUpVoteCount($id);
         $postDetails = $this->postService->getPostDetailsWithCategory($id);
         $postViewCount = $this->postViewService->getViewCount($id);
         $this->postViewService->updateViewCount($id, $request);
         return response()->json([
-            "isUpVoted" => $isUpVoted,
             "viewCounter" => $postViewCount,
             "upVotedCount" => $upVoteCount,
             "postDetails" => $postDetails
+        ], 200);
+    }
+
+
+    public function getIsUpVoted(string $id)
+    {
+        $isUpVoted = $this->upvoteDownService->getIsUpVoted($id);
+        return response()->json([
+            "isUpVoted" => $isUpVoted,
         ], 200);
     }
 }

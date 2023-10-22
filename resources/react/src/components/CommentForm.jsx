@@ -32,7 +32,6 @@ export default function CommentForm({
             axiosClient
                 .post(`/comment/${id}`, payload)
                 .then((response) => {
-                    console.log(response);
                     setBody("");
                     fetchComments();
                 })
@@ -71,7 +70,7 @@ export default function CommentForm({
                             <button
                                 className="h-12 px-10 mt-auto mb-0 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600"
                                 type="button"
-                                onClick={() => handleEditCommentId(commentId)}
+                                onClick={() => handleEditCommentId(null)}
                             >
                                 キャンセル
                             </button>

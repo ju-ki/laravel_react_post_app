@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\UpvoteDownvote;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class UpVoteDownVoteService
 {
@@ -15,13 +16,12 @@ class UpVoteDownVoteService
     }
 
 
-    public function getIsUpVoted(string $id, string $userId)
+    public function getIsUpVoted(string $id)
     {
-        if (!Auth::user()) {
+        if (!auth()->check()) {
             return 0;
         }
         $userId = Auth::user()->id;
-        //ここおかしいかも
         $isUpVoted = UpvoteDownvote::where("post_id", $id)->where("user_id", $userId)->value("is_upvoted");
         return $isUpVoted;
     }

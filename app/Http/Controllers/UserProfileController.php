@@ -14,6 +14,7 @@ class UserProfileController extends Controller
     public function getProfileInfo()
     {
         $user = Auth::user();
+        Log::info($user);
         $upVotedPostsPaginator = $user->upvotes()->paginate(5);
 
         $upVotedPosts = $upVotedPostsPaginator->getCollection()->map(function ($upvote) {
